@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Debit Note Makan Siang (Web)</title>
+<style>
+  :root{
+    --bg:#f8fafc; --card:#ffffff; --ink:#0f172a; --muted:#64748b;
+    --line:#e2e8f0; --accent:#fef3c7; --highlight:#fef08a; --blue:#e0f2fe;
+  }
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px}
+  .wrap{max-width:1100px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 24px rgba(2,6,23,.06)}
+  header{padding:20px 24px 8px;border-bottom:1px solid var(--line)}
+  h1{font-size:20px;margin:0}
+  .meta{display:grid;grid-template-columns:1fr 1fr 1fr 260px;gap:10px;padding:12px 24px 20px;border-bottom:1px solid var(--line)}
+  .meta label{font-size:12px;color:var(--muted)}
+  .meta input,.meta select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .note{padding:10px 24px;color:var(--muted);font-size:12px;border-bottom:1px dashed var(--line)}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  thead th{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:2}
+  th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:right}
+  th:first-child, td:first-child{text-align:left}
+  tbody td input[type="number"]{width:120px;max-width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;text-align:right}
+  tbody td input[type="text"]{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px}
+  tfoot td{background:#fff}
+  .row-label{background:var(--accent);font-weight:600}
+  .row-net{background:var(--highlight);font-weight:700}
+  .col-total{background:var(--blue);font-weight:600}
+  .toolbar{display:flex;gap:10px;align-items:center;padding:12px 24px}
+  .btn{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  .btn:hover{background:#f8fafc}
+  .small{font-size:12px;color:var(--muted)}
+  .right{margin-left:auto}
+  .center{text-align:center}
+  .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Debit Note Makan Siang</h1>
+  </header>
+
+  <div class="meta">
+    <div>
+      <label>Vendor / Warung</label>
+      <input id="vendor" placeholder="Warung Nasi Solo Mbak Tri" />
+    </div>
+    <div>
+      <label>Tanggal</label>
+      <input id="tanggal" type="date" />
+    </div>
+    <div>
+      <label>Catatan</label>
+      <input id="catatan" placeholder="—" />
+    </div>
+    <div>
+      <label>Basis Diskon</label>
+      <select id="basis">
+        <option>SUBTOTAL</option>
+        <option>TOTAL</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" id="addRow">+ Tambah Baris Menu</button>
+    <button class="btn" id="clearRows">Bersihkan Semua Nilai</button>
+    <div class="right small">Ongkir & Lain-lain dibagi rata ke yang pesan (subtotal &gt; 0). Diskon dibagi proporsional sesuai basis.</div>
+  </div>
+
+  <div style="overflow:auto">
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th style="min-width:240px">MENU</th>
+          <th>ICHA</th>
+          <th>WISI</th>
+          <th>SARAH</th>
+          <th>MOLI</th>
+          <th>SANTI</th>
+          <th>ANGEL</th>
+          <th class="col-total">TOTAL</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <!-- baris menu di-generate via JS -->
+      </tbody>
+      <tfoot>
+        <tr class="row-label"><td>SUBTOTAL (menu)</td>
+          <td id="st0" class="num"></td><td id="st1" class="num"></td><td id="st2" class="num"></td>
+          <td id="st3" class="num"></td><td id="st4" class="num"></td><td id="st5" class="num"></td>
+          <td id="stG" class="num col-total"></td>
+        </tr>
+        <tr class="row-label"><td>ONGKIR (TOTAL)</td>
+          <td id="ong0" class="num"></td><td id="ong1" class="num"></td><td id="ong2" class="num"></td>
+          <td id="ong3" class="num"></td><td id="ong4" class="num"></td><td id="ong5" class="num"></td>
+          <td class="col-total"><input id="ongkirTotal" type="number" inputmode="numeric" min="0" step="1" placeholder="0" /></td>
+        </tr>
+        <tr class="row-label"><td>LAIN-LAIN (TOTAL)</td>
+          <td id="lain0" class="num"></td><td id="lain1" class="num"></td><td id="lain2" class="num"></td>
+          <td id="lain3" class="num"></td><td id="lain4" class="num"></td><td id="lain5" class="num"></td>
+          <td class="col-total"><input id="lainTotal" type="number" inputmode="numeric" min="0" step="1" placeholder="0" /></td>
+        </tr>
+        <tr class="row-label"><td>TOTAL (Subtotal + Ongkir + Lain-lain)</td>
+          <td id="tt0" class="num"></td><td id="tt1" class="num"></td><td id="tt2" class="num"></td>
+          <td id="tt3" class="num"></td><td id="tt4" class="num"></td><td id="tt5" class="num"></td>
+          <td id="ttG" class="num col-total"></td>
+        </tr>
+        <tr class="row-label"><td>% (berdasar <span class="badge" id="badgeBasis">SUBTOTAL</span>)</td>
+          <td id="pct0" class="num"></td><td id="pct1" class="num"></td><td id="pct2" class="num"></td>
+          <td id="pct3" class="num"></td><td id="pct4" class="num"></td><td id="pct5" class="num"></td>
+          <td class="col-total"></td>
+        </tr>
+        <tr class="row-label"><td>DISC (TOTAL)</td>
+          <td id="dsc0" class="num"></td><td id="dsc1" class="num"></td><td id="dsc2" class="num"></td>
+          <td id="dsc3" class="num"></td><td id="dsc4" class="num"></td><td id="dsc5" class="num"></td>
+          <td class="col-total"><input id="discTotal" type="number" inputmode="numeric" min="0" step="1" placeholder="0" /></td>
+        </tr>
+        <tr class="row-net"><td>NET = Total − Disc</td>
+          <td id="net0" class="num"></td><td id="net1" class="num"></td><td id="net2" class="num"></td>
+          <td id="net3" class="num"></td><td id="net4" class="num"></td><td id="net5" class="num"></td>
+          <td id="netG" class="num col-total"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ===== Helpers ===== */
+const N = 6; // jumlah orang
+const fmt = new Intl.NumberFormat('id-ID');
+const q = sel => document.querySelector(sel);
+const ce = (tag, attrs={}) => Object.assign(document.createElement(tag), attrs);
+const valNum = v => isNaN(+v) ? 0 : +v;
+
+/* ===== Build initial rows ===== */
+const tbody = q('#tbody');
+function addRow(name='') {
+  const tr = ce('tr');
+  const tdName = ce('td');
+  const nameInput = ce('input',{type:'text',placeholder:'Nama menu',value:name});
+  tdName.appendChild(nameInput);
+  tr.appendChild(tdName);
+  for (let i=0;i<N;i++){
+    const td = ce('td');
+    const inp = ce('input',{type:'number',inputmode:'numeric',step:'1',min:'0',placeholder:'0'});
+    inp.addEventListener('input', recalc);
+    td.appendChild(inp); tr.appendChild(td);
+  }
+  const tdTotal = ce('td'); tdTotal.className='col-total num'; tdTotal.textContent='0';
+  tr.appendChild(tdTotal);
+  tbody.appendChild(tr);
+  nameInput.addEventListener('input', ()=>{ /* noop for now */ });
+  recalc();
+}
+function clearRows() {
+  [...tbody.querySelectorAll('input[type="number"]')].forEach(i=>i.value='');
+  q('#ongkirTotal').value=''; q('#lainTotal').value=''; q('#discTotal').value='';
+  recalc();
+}
+q('#addRow').addEventListener('click', ()=>addRow());
+q('#clearRows').addEventListener('click', clearRows);
+
+/* seed 10 rows */
+for(let i=0;i<10;i++) addRow();
+
+/* ===== Core calculation ===== */
+function recalc(){
+  // 1) Baca nilai per baris
+  const rows = [...tbody.rows];
+  const perPersonTotals = new Array(N).fill(0); // total per row untuk kolom TOTAL (per menu)
+  rows.forEach(tr=>{
+    const nums = [...tr.querySelectorAll('td input[type="number"]')].map(i=>valNum(i.value));
+    const rowTotal = nums.reduce((a,b)=>a+b,0);
+    tr.lastElementChild.textContent = fmt.format(rowTotal);
+    for(let i=0;i<N;i++) perPersonTotals[i]+=nums[i];
+  });
+
+  // 2) SUBTOTAL (menu)
+  for(let i=0;i<N;i++) q('#st'+i).textContent = fmt.format(perPersonTotals[i]);
+  const grandSub = perPersonTotals.reduce((a,b)=>a+b,0);
+  q('#stG').textContent = fmt.format(grandSub);
+
+  // 3) ONGKIR / LAIN dibagi rata ke yang pesan (subtotal > 0)
+  const partCount = perPersonTotals.filter(v=>v>0).length || 1;
+  const ongTot = valNum(q('#ongkirTotal').value);
+  const lainTot = valNum(q('#lainTotal').value);
+  const ongSplit = perPersonTotals.map(v=> v>0 ? ongTot/partCount : 0);
+  const lainSplit = perPersonTotals.map(v=> v>0 ? lainTot/partCount : 0);
+  for(let i=0;i<N;i++){
+    q('#ong'+i).textContent = fmt.format(Math.round(ongSplit[i]));
+    q('#lain'+i).textContent = fmt.format(Math.round(lainSplit[i]));
+  }
+
+  // 4) TOTAL = Subtotal + Ongkir + Lain2
+  const totals = perPersonTotals.map((v,i)=> v + ongSplit[i] + lainSplit[i]);
+  for(let i=0;i<N;i++) q('#tt'+i).textContent = fmt.format(Math.round(totals[i]));
+  const grandTotal = totals.reduce((a,b)=>a+b,0);
+  q('#ttG').textContent = fmt.format(Math.round(grandTotal));
+
+  // 5) Basis % (SUBTOTAL/TOTAL)
+  const basisSel = (q('#basis').value || '').trim().toUpperCase();
+  q('#badgeBasis').textContent = basisSel;
+  const basisArr = basisSel === 'TOTAL' ? totals : perPersonTotals;
+  const basisSum = basisArr.reduce((a,b)=>a+b,0);
+  const pct = basisArr.map(v=> basisSum>0 ? v/basisSum : 0);
+  for(let i=0;i<N;i++){
+    q('#pct'+i).textContent = (pct[i]*100).toFixed(2)+'%';
+  }
+
+  // 6) Diskon proporsional & NET
+  const discTot = valNum(q('#discTotal').value);
+  const discArr = pct.map(p=> discTot*p);
+  for(let i=0;i<N;i++) q('#dsc'+i).textContent = fmt.format(Math.round(discArr[i]));
+  const net = totals.map((v,i)=> v - discArr[i]);
+  for(let i=0;i<N;i++) q('#net'+i).textContent = fmt.format(Math.round(net[i]));
+  q('#netG').textContent = fmt.format(Math.round(net.reduce((a,b)=>a+b,0)));
+}
+
+// Events
+['basis','ongkirTotal','lainTotal','discTotal'].forEach(id=>{
+  q('#'+id).addEventListener('input', recalc);
+  q('#'+id).addEventListener('change', recalc);
+});
+tbody.addEventListener('input', recalc);
+recalc();
+</script>
+</body>
+</html>
