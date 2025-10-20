@@ -174,13 +174,14 @@ function recalc(){
 
   // ambil total ongkir/lain/diskon (prefer data-value agar aman)
   const getTotalFrom = id => {
-    const el = document.getElementById(id).querySelector('input.money');
-    if(!el) return 0;
-    return cleanNumber(el.value || el.dataset.value);
-  };
-  const ongTot  = getTotalFrom('rOng_total');
-  const lainTot = getTotalFrom('rLain_total');
-  const discTot = getTotalFrom('rDisc_total');
+  const el = document.getElementById(`${id}_total`);
+  if (!el) return 0;
+  return cleanNumber(el.value || el.dataset.value);
+};
+
+const ongTot  = getTotalFrom('rOng');
+const lainTot = getTotalFrom('rLain');
+const discTot = getTotalFrom('rDisc');
 
   // bagi rata ongkir/lain (base + remainder)
   const splitEven = total => {
@@ -245,3 +246,4 @@ boot();
 </script>
 </body>
 </html>
+
