@@ -3,22 +3,23 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Debit Note Makan Siang (Auto Split Ongkir & Diskon)</title>
+<title>Debit Note Makan Siang</title>
 <style>
   :root{--bg:#f8fafc;--card:#fff;--line:#e5e7eb;--ink:#0f172a;--muted:#64748b;--accent:#fef3c7;--hi:#fef08a;--blue:#e0f2fe}
-  *{box-sizing:border-box} body{font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px}
+  *{box-sizing:border-box}
+  body{font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px}
   .wrap{max-width:1120px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 24px rgba(2,6,23,.06)}
   header{padding:18px;border-bottom:1px solid var(--line)} h1{margin:0;text-align:center;font-size:20px}
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 18px;border-bottom:1px dashed var(--line)}
-  .btn{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer} .btn:hover{background:#f8fafc}
-  select,input[type=text]{padding:7px 9px;border:1px solid var(--line);border-radius:10px}
+  .btn{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}
+  .btn:hover{background:#f8fafc}
+  select{padding:8px 10px;border:1px solid var(--line);border-radius:10px}
   table{width:100%;border-collapse:separate;border-spacing:0}
-  th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:right}
+  th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:right;vertical-align:middle}
   th:first-child,td:first-child{text-align:left}
   thead th{background:#fff;position:sticky;top:0;z-index:2}
-  tbody td input{width:110px;max-width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;text-align:right}
-  tbody td:first-child input{width:100%;text-align:left}
-  tfoot td{background:#fff}
+  input.money{width:120px;max-width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;text-align:right}
+  td:first-child input.money{width:100%;text-align:left}
   .row-label{background:var(--accent);font-weight:600}
   .row-net{background:var(--hi);font-weight:700}
   .col-total{background:var(--blue);font-weight:600}
@@ -41,7 +42,8 @@
   <div style="overflow:auto">
     <table id="tbl">
       <thead>
-        <tr id="hdr"><th>MENU</th>
+        <tr id="hdr">
+          <th>MENU</th>
           <th>ICHA</th><th>WISI</th><th>SARAH</th><th>MOLI</th><th>SANTI</th><th>ANGEL</th>
           <th class="col-total">TOTAL</th>
         </tr>
@@ -59,27 +61,25 @@
     </table>
   </div>
 
-  <div class="note">Tip: Kamu bisa ketik <b>10000</b>, <b>10.000</b>, atau <b>10,000</b> di kolom total ongkir/diskon — semuanya akan terbaca sebagai 10.000.</div>
+  <div class="note">Ketik <b>10000</b>, <b>10.000</b>, atau <b>10,000</b> di kolom ongkir/diskon—semua dibaca sebagai 10.000.</div>
 </div>
 
 <script>
-/* ---------- Helpers ---------- */
+/* ===== Utils ===== */
 const fmtID = new Intl.NumberFormat('id-ID');
 const fmt = n => fmtID.format(Math.round(n));
 const cleanNumber = v => {
-  // Terima "10.000", "10,000", "10 000", "10.000,50" → ambil digit saja
   const s = (v ?? '').toString().replace(/[^\d\-]/g,'');
-  if (s === '' || s === '-' || s === '--') return 0;
-  return parseInt(s,10)||0;
+  if (!s || s === '-' || s === '--') return 0;
+  return parseInt(s,10) || 0;
 };
-const q = s => document.querySelector(s);
 
 let names = ["ICHA","WISI","SARAH","MOLI","SANTI","ANGEL"];
-const tbody = q('#tbody');
+const tbody = document.getElementById('tbody');
 
-/* ---------- Build header/footer ---------- */
 function rebuildHeader(){
-  q('#hdr').innerHTML = '<th>MENU</th>' + names.map(n=>`<th>${n}</th>`).join('') + '<th class="col-total">TOTAL</th>';
+  document.getElementById('hdr').innerHTML =
+    '<th>MENU</th>' + names.map(n=>`<th>${n}</th>`).join('') + '<th class="col-total">TOTAL</th>';
 }
 function rebuildFooter(){
   const rows = [
@@ -91,150 +91,157 @@ function rebuildFooter(){
     ['rDisc', true],
     ['rNet', false],
   ];
-  rows.forEach(([id, withInput])=>{
-    const tr = q('#'+id);
+  rows.forEach(([id,withInp])=>{
+    const tr = document.getElementById(id);
     tr.querySelectorAll('td:not(:first-child)').forEach(td=>td.remove());
     names.forEach((_,i)=>{
       const td = document.createElement('td'); td.id = `${id}_${i}`; tr.appendChild(td);
     });
-    const tdTot = document.createElement('td');
-    if(withInput){
+    const tdTot = document.createElement('td'); tdTot.className='col-total';
+    if(withInp){
       const inp = document.createElement('input');
-      inp.type = 'text';        // ← teks agar bisa 10.000 / 10,000
-      inp.inputMode = 'numeric';
-      inp.placeholder = '0';
-      inp.id = `${id}_total`;
-      inp.addEventListener('input', recalc);
+      inp.type = 'text'; inp.className='money'; inp.placeholder='0'; inp.id = `${id}_total`;
+      // simpan numeric di data-value + trigger calc
+      const handle = e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); };
+      inp.addEventListener('input', handle); inp.addEventListener('change', handle); inp.addEventListener('keyup', handle);
       tdTot.appendChild(inp);
-    }else{
-      tdTot.id = `${id}_total`;
-    }
-    tdTot.className = 'col-total';
+    } else tdTot.id = `${id}_total`;
     tr.appendChild(tdTot);
   });
 }
 
-/* ---------- Rows ---------- */
 function addRow(label=''){
   const tr = document.createElement('tr');
-  const nameTd = document.createElement('td');
-  const nameIn = document.createElement('input');
-  nameIn.type='text'; nameIn.placeholder='Nama menu'; nameIn.value=label;
-  nameTd.appendChild(nameIn); tr.appendChild(nameTd);
-  names.forEach(()=> {
+  const first = document.createElement('td');
+  const nameIn = document.createElement('input'); nameIn.type='text'; nameIn.className='money'; nameIn.placeholder='Nama menu'; nameIn.style.textAlign='left'; nameIn.value=label;
+  first.appendChild(nameIn); tr.appendChild(first);
+
+  names.forEach(()=>{
     const td = document.createElement('td');
     const inp = document.createElement('input');
-    inp.type='text'; inp.inputMode='numeric'; inp.placeholder='0';
-    inp.addEventListener('input', recalc);
+    inp.type='text'; inp.className='money'; inp.placeholder='0';
+    const handle = e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); };
+    inp.addEventListener('input', handle); inp.addEventListener('change', handle); inp.addEventListener('keyup', handle);
     td.appendChild(inp); tr.appendChild(td);
   });
-  const tot = document.createElement('td'); tot.className='col-total'; tot.textContent='0'; tr.appendChild(tot);
+
+  const total = document.createElement('td'); total.className='col-total'; total.textContent='0'; tr.appendChild(total);
   tbody.appendChild(tr);
 }
+
 function addPerson(){
   const nm = prompt('Nama orang baru?'); if(!nm) return;
   names.push(nm.toUpperCase());
   rebuildHeader(); rebuildFooter();
   [...tbody.rows].forEach(tr=>{
     const td = document.createElement('td');
-    const inp= document.createElement('input'); inp.type='text'; inp.inputMode='numeric'; inp.placeholder='0';
-    inp.addEventListener('input', recalc);
+    const inp= document.createElement('input');
+    inp.type='text'; inp.className='money'; inp.placeholder='0';
+    const handle = e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); };
+    inp.addEventListener('input', handle); inp.addEventListener('change', handle); inp.addEventListener('keyup', handle);
     td.appendChild(inp);
     tr.insertBefore(td, tr.lastElementChild);
   });
   recalc();
 }
+
 function clearAll(){
-  [...document.querySelectorAll('input')].forEach(i=> i.value='');
+  document.querySelectorAll('input.money').forEach(i=>{ i.value=''; i.dataset.value='0'; });
   recalc();
 }
 
-/* ---------- Core calc ---------- */
+/* ===== Core calc ===== */
 function recalc(){
-  // per-bar
-  const perPerson = new Array(names.length).fill(0);
+  const per = new Array(names.length).fill(0);
+
+  // hitung total per baris + subtotal per orang
   [...tbody.rows].forEach(tr=>{
-    const vals = [...tr.querySelectorAll('td input[type=text]')]
-                  .slice(1) // skip nama menu
-                  .map(i=>cleanNumber(i.value));
+    const inputs = [...tr.querySelectorAll('td input.money')].slice(1); // skip nama menu
+    const vals = inputs.map(i => cleanNumber(i.value || i.dataset.value));
     const rowTot = vals.reduce((a,b)=>a+b,0);
     tr.lastElementChild.textContent = fmt(rowTot);
-    vals.forEach((v,i)=> perPerson[i]+=v);
+    vals.forEach((v,i)=> per[i]+=v);
   });
 
   // SUBTOTAL
-  const gSub = perPerson.reduce((a,b)=>a+b,0);
-  perPerson.forEach((v,i)=> q(`#rSub_${i}`).textContent = fmt(v));
-  q('#rSub_total').textContent = fmt(gSub);
+  const gSub = per.reduce((a,b)=>a+b,0);
+  per.forEach((v,i)=> (document.getElementById(`rSub_${i}`).textContent = fmt(v)));
+  document.getElementById('rSub_total').textContent = fmt(gSub);
 
-  // Partisipan yang pesan
-  const idxActive = perPerson.map((v,i)=> v>0 ? i : -1).filter(i=>i>=0);
-  const nActive = idxActive.length || 1;
+  // peserta aktif
+  const activeIdx = per.map((v,i)=> v>0?i:-1).filter(i=>i>=0);
+  const nAct = activeIdx.length || 1;
 
-  // Ambil total ongkir/lain/diskon (kebal format)
-  const ongTot = cleanNumber(q('#rOng_total').querySelector('input')?.value);
-  const lainTot= cleanNumber(q('#rLain_total').querySelector('input')?.value);
-  const discTot= cleanNumber(q('#rDisc_total').querySelector('input')?.value);
+  // ambil total ongkir/lain/diskon (prefer data-value agar aman)
+  const getTotalFrom = id => {
+    const el = document.getElementById(id).querySelector('input.money');
+    if(!el) return 0;
+    return cleanNumber(el.value || el.dataset.value);
+  };
+  const ongTot  = getTotalFrom('rOng_total');
+  const lainTot = getTotalFrom('rLain_total');
+  const discTot = getTotalFrom('rDisc_total');
 
-  // Split rata ongkir/lain dengan perbaikan pembulatan: base + remainder
-  function splitEven(total){
+  // bagi rata ongkir/lain (base + remainder)
+  const splitEven = total => {
     const arr = new Array(names.length).fill(0);
-    if (nActive===0 || total===0) return arr;
-    const base = Math.floor(total / nActive);
-    let rem = total - base*nActive;
-    idxActive.forEach(i=> arr[i]=base);
-    // sebar sisa ke peserta pertama, dst
-    for(let k=0;k<rem;k++) arr[idxActive[k % nActive]] += 1;
+    if(total===0 || nAct===0) return arr;
+    const base = Math.floor(total / nAct);
+    let rem = total - base*nAct;
+    activeIdx.forEach(i=> arr[i]=base);
+    for(let k=0;k<rem;k++) arr[activeIdx[k % nAct]]++;
     return arr;
-  }
+  };
   const ongArr  = splitEven(ongTot);
   const lainArr = splitEven(lainTot);
-  ongArr.forEach((v,i)=> q(`#rOng_${i}`).textContent = fmt(v));
-  lainArr.forEach((v,i)=> q(`#rLain_${i}`).textContent = fmt(v));
+  ongArr.forEach((v,i)=> (document.getElementById(`rOng_${i}`).textContent = fmt(v)));
+  lainArr.forEach((v,i)=> (document.getElementById(`rLain_${i}`).textContent = fmt(v)));
 
   // TOTAL
-  const total = perPerson.map((v,i)=> v + ongArr[i] + lainArr[i]);
+  const total = per.map((v,i)=> v + ongArr[i] + lainArr[i]);
   const gTot = total.reduce((a,b)=>a+b,0);
-  total.forEach((v,i)=> q(`#rTot_${i}`).textContent = fmt(v));
-  q('#rTot_total').textContent = fmt(gTot);
+  total.forEach((v,i)=> (document.getElementById(`rTot_${i}`).textContent = fmt(v)));
+  document.getElementById('rTot_total').textContent = fmt(gTot);
 
-  // Persentase
-  const basis = (q('#basis').value||'').trim().toUpperCase();
-  q('#badge').textContent = basis;
-  const basisArr = basis==='TOTAL' ? total : perPerson;
-  const basisSum = basisArr.reduce((a,b)=>a+b,0) || 1;
-  const pct = basisArr.map(v=> v/basisSum);
-  pct.forEach((p,i)=> q(`#rPct_${i}`).textContent = (p*100).toFixed(2)+'%');
+  // Persentase (basis)
+  const basis = (document.getElementById('basis').value || '').trim().toUpperCase();
+  document.getElementById('badge').textContent = basis;
+  const arr = basis==='TOTAL' ? total : per;
+  const baseSum = arr.reduce((a,b)=>a+b,0) || 1;
+  const pct = arr.map(v=> v/baseSum);
+  pct.forEach((p,i)=> (document.getElementById(`rPct_${i}`).textContent = (p*100).toFixed(2)+'%'));
 
-  // Diskon proporsional
-  const discArr = pct.map(p=> Math.round(discTot*p));
-  // Koreksi agar jumlah diskon per orang = diskon total persis
-  const dSum = discArr.reduce((a,b)=>a+b,0);
-  let diff = discTot - dSum;
-  for(let i=0; diff>0; i=(i+1)%names.length){ discArr[i]++; diff--; }
-  for(let i=0; diff<0; i=(i+1)%names.length){ discArr[i]--; diff++; }
-
-  discArr.forEach((v,i)=> q(`#rDisc_${i}`).textContent = fmt(v));
+  // Diskon proporsional + koreksi pembulatan
+  let discArr = pct.map(p=> Math.round(discTot*p));
+  let dSum = discArr.reduce((a,b)=>a+b,0);
+  for(let i=0; dSum<discTot; i=(i+1)%names.length){ discArr[i]++; dSum++; }
+  for(let i=0; dSum>discTot; i=(i+1)%names.length){ discArr[i]--; dSum--; }
+  discArr.forEach((v,i)=> (document.getElementById(`rDisc_${i}`).textContent = fmt(v)));
 
   // NET
   const net = total.map((v,i)=> v - discArr[i]);
   const gNet = net.reduce((a,b)=>a+b,0);
-  net.forEach((v,i)=> q(`#rNet_${i}`).textContent = fmt(v));
-  q('#rNet_total').textContent = fmt(gNet);
+  net.forEach((v,i)=> (document.getElementById(`rNet_${i}`).textContent = fmt(v)));
+  document.getElementById('rNet_total').textContent = fmt(gNet);
 }
 
-/* ---------- Events & init ---------- */
-q('#addRow').addEventListener('click', ()=>{ addRow(); });
-q('#addPerson').addEventListener('click', addPerson);
-q('#clearAll').addEventListener('click', clearAll);
-q('#basis').addEventListener('change', recalc);
+/* ===== Events & init ===== */
+document.getElementById('addRow').addEventListener('click', ()=>addRow());
+document.getElementById('addPerson').addEventListener('click', addPerson);
+document.getElementById('clearAll').addEventListener('click', clearAll);
+document.getElementById('basis').addEventListener('change', recalc);
+// delegate global untuk jaga-jaga
+document.addEventListener('input', e=>{ if(e.target.classList.contains('money')) recalc(); });
+document.addEventListener('keyup', e=>{ if(e.target.classList.contains('money')) recalc(); });
+document.addEventListener('change', e=>{ if(e.target.classList.contains('money')) recalc(); });
 
-function init(){
+// init
+function boot(){
   rebuildHeader(); rebuildFooter();
   for(let i=0;i<10;i++) addRow();
   recalc();
 }
-init();
+boot();
 </script>
 </body>
 </html>
