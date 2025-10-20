@@ -3,161 +3,238 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Debit Note Makan Siang (YDDA)</title>
+<title>Debit Note Makan Siang (Auto Split Ongkir & Diskon)</title>
 <style>
-body{font-family:Arial,Helvetica,sans-serif;background:#f8fafc;margin:0;padding:20px}
-h1{margin:0;font-size:22px;text-align:center}
-.container{max-width:1200px;margin:auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:15px 0}
-button{padding:6px 12px;border-radius:6px;border:1px solid #ccc;cursor:pointer;background:#fff}
-button:hover{background:#f1f5f9}
-input,select{padding:5px;border:1px solid #ccc;border-radius:6px}
-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
-th,td{border:1px solid #ddd;padding:6px;text-align:right}
-th:first-child,td:first-child{text-align:left}
-tfoot td{font-weight:bold;background:#fefce8}
-tfoot tr.net td{background:#fef08a}
-input[type=number]{width:90px;text-align:right}
-.add-col{background:#dbeafe;color:#1e3a8a;font-weight:bold}
+  :root{--bg:#f8fafc;--card:#fff;--line:#e5e7eb;--ink:#0f172a;--muted:#64748b;--accent:#fef3c7;--hi:#fef08a;--blue:#e0f2fe}
+  *{box-sizing:border-box} body{font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px}
+  .wrap{max-width:1120px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 24px rgba(2,6,23,.06)}
+  header{padding:18px;border-bottom:1px solid var(--line)} h1{margin:0;text-align:center;font-size:20px}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 18px;border-bottom:1px dashed var(--line)}
+  .btn{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer} .btn:hover{background:#f8fafc}
+  select,input[type=text]{padding:7px 9px;border:1px solid var(--line);border-radius:10px}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  thead th{background:#fff;position:sticky;top:0;z-index:2}
+  tbody td input{width:110px;max-width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;text-align:right}
+  tbody td:first-child input{width:100%;text-align:left}
+  tfoot td{background:#fff}
+  .row-label{background:var(--accent);font-weight:600}
+  .row-net{background:var(--hi);font-weight:700}
+  .col-total{background:var(--blue);font-weight:600}
+  .note{font-size:12px;color:var(--muted);padding:8px 18px 16px}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>Debit Note Makan Siang (YDDA)</h1>
+<div class="wrap">
+  <header><h1>Debit Note Makan Siang</h1></header>
+
   <div class="toolbar">
-    <button id="addRow">+ Tambah Menu</button>
-    <button id="addPerson">+ Tambah Nama</button>
-    <button id="clearAll">🧹 Bersihkan</button>
-    <label>Basis Diskon:
+    <button class="btn" id="addRow">+ Tambah Menu</button>
+    <button class="btn" id="addPerson">+ Tambah Nama</button>
+    <button class="btn" id="clearAll">🧹 Bersihkan</button>
+    <span style="margin-left:auto">Basis Diskon:
       <select id="basis"><option>SUBTOTAL</option><option>TOTAL</option></select>
-    </label>
+    </span>
   </div>
 
-  <table id="tbl">
-    <thead>
-      <tr id="headerRow">
-        <th>MENU</th>
-        <th>ICHA</th><th>WISI</th><th>SARAH</th><th>MOLI</th><th>SANTI</th><th>ANGEL</th>
-        <th class="col-total">TOTAL</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-    <tfoot>
-      <tr id="rowSub"><td>SUBTOTAL (menu)</td></tr>
-      <tr id="rowOngkir"><td>ONGKIR (TOTAL)</td></tr>
-      <tr id="rowLain"><td>LAIN-LAIN (TOTAL)</td></tr>
-      <tr id="rowTotal"><td>TOTAL</td></tr>
-      <tr id="rowPct"><td>% (berdasar <span id="basisLabel">SUBTOTAL</span>)</td></tr>
-      <tr id="rowDisc"><td>DISC (TOTAL)</td></tr>
-      <tr class="net" id="rowNet"><td>NET = Total - Disc</td></tr>
-    </tfoot>
-  </table>
+  <div style="overflow:auto">
+    <table id="tbl">
+      <thead>
+        <tr id="hdr"><th>MENU</th>
+          <th>ICHA</th><th>WISI</th><th>SARAH</th><th>MOLI</th><th>SANTI</th><th>ANGEL</th>
+          <th class="col-total">TOTAL</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+      <tfoot>
+        <tr class="row-label" id="rSub"><td>SUBTOTAL (menu)</td></tr>
+        <tr class="row-label" id="rOng"><td>ONGKIR (TOTAL)</td></tr>
+        <tr class="row-label" id="rLain"><td>LAIN-LAIN (TOTAL)</td></tr>
+        <tr class="row-label" id="rTot"><td>TOTAL (Subtotal + Ongkir + Lain)</td></tr>
+        <tr class="row-label" id="rPct"><td>% (berdasar <span id="badge">SUBTOTAL</span>)</td></tr>
+        <tr class="row-label" id="rDisc"><td>DISC (TOTAL)</td></tr>
+        <tr class="row-net"  id="rNet"><td>NET = Total − Disc</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="note">Tip: Kamu bisa ketik <b>10000</b>, <b>10.000</b>, atau <b>10,000</b> di kolom total ongkir/diskon — semuanya akan terbaca sebagai 10.000.</div>
 </div>
 
 <script>
-const fmt = n => n.toLocaleString('id-ID');
-const parseNum = v => isNaN(+v)?0:+v;
-let names = ["ICHA","WISI","SARAH","MOLI","SANTI","ANGEL"];
-const tbody = document.getElementById("tbody");
-const basisSel = document.getElementById("basis");
-const basisLabel = document.getElementById("basisLabel");
+/* ---------- Helpers ---------- */
+const fmtID = new Intl.NumberFormat('id-ID');
+const fmt = n => fmtID.format(Math.round(n));
+const cleanNumber = v => {
+  // Terima "10.000", "10,000", "10 000", "10.000,50" → ambil digit saja
+  const s = (v ?? '').toString().replace(/[^\d\-]/g,'');
+  if (s === '' || s === '-' || s === '--') return 0;
+  return parseInt(s,10)||0;
+};
+const q = s => document.querySelector(s);
 
+let names = ["ICHA","WISI","SARAH","MOLI","SANTI","ANGEL"];
+const tbody = q('#tbody');
+
+/* ---------- Build header/footer ---------- */
+function rebuildHeader(){
+  q('#hdr').innerHTML = '<th>MENU</th>' + names.map(n=>`<th>${n}</th>`).join('') + '<th class="col-total">TOTAL</th>';
+}
 function rebuildFooter(){
-  const footRows = ["rowSub","rowOngkir","rowLain","rowTotal","rowPct","rowDisc","rowNet"];
-  footRows.forEach(id=>{
-    const tr=document.getElementById(id);
-    tr.querySelectorAll("td:not(:first-child)").forEach(td=>td.remove());
-    names.forEach((n,i)=>{
-      const td=document.createElement("td"); td.id=`${id}_${i}`; tr.appendChild(td);
+  const rows = [
+    ['rSub', false],
+    ['rOng',  true],
+    ['rLain', true],
+    ['rTot', false],
+    ['rPct', false],
+    ['rDisc', true],
+    ['rNet', false],
+  ];
+  rows.forEach(([id, withInput])=>{
+    const tr = q('#'+id);
+    tr.querySelectorAll('td:not(:first-child)').forEach(td=>td.remove());
+    names.forEach((_,i)=>{
+      const td = document.createElement('td'); td.id = `${id}_${i}`; tr.appendChild(td);
     });
-    const tdTot=document.createElement("td");
-    if(id==="rowOngkir"||id==="rowLain"||id==="rowDisc"){
-      const inp=document.createElement("input"); inp.type="number"; inp.id=`${id}_total`; inp.oninput=calc;
+    const tdTot = document.createElement('td');
+    if(withInput){
+      const inp = document.createElement('input');
+      inp.type = 'text';        // ← teks agar bisa 10.000 / 10,000
+      inp.inputMode = 'numeric';
+      inp.placeholder = '0';
+      inp.id = `${id}_total`;
+      inp.addEventListener('input', recalc);
       tdTot.appendChild(inp);
-    } else tdTot.id=`${id}_total`;
+    }else{
+      tdTot.id = `${id}_total`;
+    }
+    tdTot.className = 'col-total';
     tr.appendChild(tdTot);
   });
 }
-function rebuildHeader(){
-  const head=document.getElementById("headerRow");
-  head.innerHTML='<th>MENU</th>'+names.map(n=>`<th>${n}</th>`).join("")+'<th class="col-total">TOTAL</th>';
-}
-function addRow(name=""){
-  const tr=document.createElement("tr");
-  tr.innerHTML=`<td><input type="text" placeholder="Nama menu" value="${name}"></td>`+
-    names.map(()=>`<td><input type="number" min="0" step="1"></td>`).join("")+
-    `<td class="total">0</td>`;
+
+/* ---------- Rows ---------- */
+function addRow(label=''){
+  const tr = document.createElement('tr');
+  const nameTd = document.createElement('td');
+  const nameIn = document.createElement('input');
+  nameIn.type='text'; nameIn.placeholder='Nama menu'; nameIn.value=label;
+  nameTd.appendChild(nameIn); tr.appendChild(nameTd);
+  names.forEach(()=> {
+    const td = document.createElement('td');
+    const inp = document.createElement('input');
+    inp.type='text'; inp.inputMode='numeric'; inp.placeholder='0';
+    inp.addEventListener('input', recalc);
+    td.appendChild(inp); tr.appendChild(td);
+  });
+  const tot = document.createElement('td'); tot.className='col-total'; tot.textContent='0'; tr.appendChild(tot);
   tbody.appendChild(tr);
-  calc();
 }
 function addPerson(){
-  const nm=prompt("Masukkan nama orang baru:");
-  if(!nm) return;
+  const nm = prompt('Nama orang baru?'); if(!nm) return;
   names.push(nm.toUpperCase());
   rebuildHeader(); rebuildFooter();
   [...tbody.rows].forEach(tr=>{
-    const td=document.createElement("td");
-    const inp=document.createElement("input");
-    inp.type="number"; inp.min=0; inp.step=1;
-    inp.oninput=calc;
+    const td = document.createElement('td');
+    const inp= document.createElement('input'); inp.type='text'; inp.inputMode='numeric'; inp.placeholder='0';
+    inp.addEventListener('input', recalc);
     td.appendChild(inp);
-    tr.insertBefore(td,tr.lastElementChild);
+    tr.insertBefore(td, tr.lastElementChild);
   });
-  calc();
+  recalc();
 }
-function calc(){
-  const rows=[...tbody.rows];
-  const subtot=new Array(names.length).fill(0);
-  rows.forEach(tr=>{
-    const vals=[...tr.querySelectorAll('td input[type=number]')].map(i=>parseNum(i.value));
-    const sum=vals.reduce((a,b)=>a+b,0);
-    tr.querySelector(".total").textContent=fmt(sum);
-    vals.forEach((v,i)=>subtot[i]+=v);
-  });
-  // Subtotal
-  let subG=0;
-  subtot.forEach((v,i)=>{document.getElementById(`rowSub_${i}`).textContent=fmt(v); subG+=v});
-  document.getElementById("rowSub_total").textContent=fmt(subG);
-  // Ongkir & Lain-lain
-  const cnt=subtot.filter(v=>v>0).length||1;
-  const ong=parseNum(document.getElementById("rowOngkir_total").querySelector("input")?.value||0);
-  const lain=parseNum(document.getElementById("rowLain_total").querySelector("input")?.value||0);
-  const ongEach=subtot.map(v=>v>0?ong/cnt:0);
-  const lainEach=subtot.map(v=>v>0?lain/cnt:0);
-  ongEach.forEach((v,i)=>document.getElementById(`rowOngkir_${i}`).textContent=fmt(v));
-  lainEach.forEach((v,i)=>document.getElementById(`rowLain_${i}`).textContent=fmt(v));
-  // Total
-  const total=subtot.map((v,i)=>v+ongEach[i]+lainEach[i]);
-  let totG=0;
-  total.forEach((v,i)=>{document.getElementById(`rowTotal_${i}`).textContent=fmt(v); totG+=v});
-  document.getElementById("rowTotal_total").textContent=fmt(totG);
-  // Persentase
-  const basis=basisSel.value.trim().toUpperCase();
-  basisLabel.textContent=basis;
-  const arr=(basis==="TOTAL"?total:subtot);
-  const baseSum=arr.reduce((a,b)=>a+b,0);
-  const pct=arr.map(v=>baseSum?v/baseSum:0);
-  pct.forEach((p,i)=>document.getElementById(`rowPct_${i}`).textContent=(p*100).toFixed(2)+"%");
-  // Diskon proporsional
-  const disc=parseNum(document.getElementById("rowDisc_total").querySelector("input")?.value||0);
-  const discEach=pct.map(p=>disc*p);
-  discEach.forEach((v,i)=>document.getElementById(`rowDisc_${i}`).textContent=fmt(v));
-  // Net
-  const net=total.map((v,i)=>v-discEach[i]);
-  let netG=0;
-  net.forEach((v,i)=>{document.getElementById(`rowNet_${i}`).textContent=fmt(v); netG+=v});
-  document.getElementById("rowNet_total").textContent=fmt(netG);
+function clearAll(){
+  [...document.querySelectorAll('input')].forEach(i=> i.value='');
+  recalc();
 }
-document.getElementById("addRow").onclick=()=>addRow();
-document.getElementById("addPerson").onclick=addPerson;
-document.getElementById("clearAll").onclick=()=>{[...document.querySelectorAll('input[type=number]')].forEach(i=>i.value='');calc();};
-basisSel.onchange=calc;
 
-// Init
-rebuildFooter();
-for(let i=0;i<10;i++) addRow();
-calc();
+/* ---------- Core calc ---------- */
+function recalc(){
+  // per-bar
+  const perPerson = new Array(names.length).fill(0);
+  [...tbody.rows].forEach(tr=>{
+    const vals = [...tr.querySelectorAll('td input[type=text]')]
+                  .slice(1) // skip nama menu
+                  .map(i=>cleanNumber(i.value));
+    const rowTot = vals.reduce((a,b)=>a+b,0);
+    tr.lastElementChild.textContent = fmt(rowTot);
+    vals.forEach((v,i)=> perPerson[i]+=v);
+  });
+
+  // SUBTOTAL
+  const gSub = perPerson.reduce((a,b)=>a+b,0);
+  perPerson.forEach((v,i)=> q(`#rSub_${i}`).textContent = fmt(v));
+  q('#rSub_total').textContent = fmt(gSub);
+
+  // Partisipan yang pesan
+  const idxActive = perPerson.map((v,i)=> v>0 ? i : -1).filter(i=>i>=0);
+  const nActive = idxActive.length || 1;
+
+  // Ambil total ongkir/lain/diskon (kebal format)
+  const ongTot = cleanNumber(q('#rOng_total').querySelector('input')?.value);
+  const lainTot= cleanNumber(q('#rLain_total').querySelector('input')?.value);
+  const discTot= cleanNumber(q('#rDisc_total').querySelector('input')?.value);
+
+  // Split rata ongkir/lain dengan perbaikan pembulatan: base + remainder
+  function splitEven(total){
+    const arr = new Array(names.length).fill(0);
+    if (nActive===0 || total===0) return arr;
+    const base = Math.floor(total / nActive);
+    let rem = total - base*nActive;
+    idxActive.forEach(i=> arr[i]=base);
+    // sebar sisa ke peserta pertama, dst
+    for(let k=0;k<rem;k++) arr[idxActive[k % nActive]] += 1;
+    return arr;
+  }
+  const ongArr  = splitEven(ongTot);
+  const lainArr = splitEven(lainTot);
+  ongArr.forEach((v,i)=> q(`#rOng_${i}`).textContent = fmt(v));
+  lainArr.forEach((v,i)=> q(`#rLain_${i}`).textContent = fmt(v));
+
+  // TOTAL
+  const total = perPerson.map((v,i)=> v + ongArr[i] + lainArr[i]);
+  const gTot = total.reduce((a,b)=>a+b,0);
+  total.forEach((v,i)=> q(`#rTot_${i}`).textContent = fmt(v));
+  q('#rTot_total').textContent = fmt(gTot);
+
+  // Persentase
+  const basis = (q('#basis').value||'').trim().toUpperCase();
+  q('#badge').textContent = basis;
+  const basisArr = basis==='TOTAL' ? total : perPerson;
+  const basisSum = basisArr.reduce((a,b)=>a+b,0) || 1;
+  const pct = basisArr.map(v=> v/basisSum);
+  pct.forEach((p,i)=> q(`#rPct_${i}`).textContent = (p*100).toFixed(2)+'%');
+
+  // Diskon proporsional
+  const discArr = pct.map(p=> Math.round(discTot*p));
+  // Koreksi agar jumlah diskon per orang = diskon total persis
+  const dSum = discArr.reduce((a,b)=>a+b,0);
+  let diff = discTot - dSum;
+  for(let i=0; diff>0; i=(i+1)%names.length){ discArr[i]++; diff--; }
+  for(let i=0; diff<0; i=(i+1)%names.length){ discArr[i]--; diff++; }
+
+  discArr.forEach((v,i)=> q(`#rDisc_${i}`).textContent = fmt(v));
+
+  // NET
+  const net = total.map((v,i)=> v - discArr[i]);
+  const gNet = net.reduce((a,b)=>a+b,0);
+  net.forEach((v,i)=> q(`#rNet_${i}`).textContent = fmt(v));
+  q('#rNet_total').textContent = fmt(gNet);
+}
+
+/* ---------- Events & init ---------- */
+q('#addRow').addEventListener('click', ()=>{ addRow(); });
+q('#addPerson').addEventListener('click', addPerson);
+q('#clearAll').addEventListener('click', clearAll);
+q('#basis').addEventListener('change', recalc);
+
+function init(){
+  rebuildHeader(); rebuildFooter();
+  for(let i=0;i<10;i++) addRow();
+  recalc();
+}
+init();
 </script>
 </body>
 </html>
-
