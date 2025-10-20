@@ -24,6 +24,24 @@
   .row-net{background:var(--hi);font-weight:700}
   .col-total{background:var(--blue);font-weight:600}
   .note{font-size:12px;color:var(--muted);padding:8px 18px 16px}
+
+  /* ====== PRINT STYLES ====== */
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    body{padding:0;background:#fff}
+    .wrap{box-shadow:none;border:none;border-radius:0}
+    header{border:none;padding:0 0 8px 0}
+    .toolbar,.note{display:none !important}
+    thead th{position:static} /* non-sticky saat cetak */
+    input.money{
+      border:none !important; outline:none !important; background:transparent !important;
+      padding:0 !important; width:auto !important; text-align:right
+    }
+    td:first-child input.money{ text-align:left }
+    .col-total{background:#fff !important}
+    .row-label{background:#fff7d1 !important}
+    .row-net{background:#fff3a3 !important}
+  }
 </style>
 </head>
 <body>
@@ -34,6 +52,7 @@
     <button class="btn" id="addRow">+ Tambah Menu</button>
     <button class="btn" id="addPerson">+ Tambah Nama</button>
     <button class="btn" id="clearAll">🧹 Bersihkan</button>
+    <button class="btn" id="printBtn">🖨️ Print / PDF</button>
     <span style="margin-left:auto">Basis Diskon:
       <select id="basis"><option>SUBTOTAL</option><option>TOTAL</option></select>
     </span>
@@ -101,7 +120,6 @@ function rebuildFooter(){
     if(withInp){
       const inp = document.createElement('input');
       inp.type = 'text'; inp.className='money'; inp.placeholder='0'; inp.id = `${id}_total`;
-      // simpan numeric di data-value + trigger calc
       const handle = e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); };
       inp.addEventListener('input', handle); inp.addEventListener('change', handle); inp.addEventListener('keyup', handle);
       tdTot.appendChild(inp);
@@ -172,16 +190,15 @@ function recalc(){
   const activeIdx = per.map((v,i)=> v>0?i:-1).filter(i=>i>=0);
   const nAct = activeIdx.length || 1;
 
-  // ambil total ongkir/lain/diskon (prefer data-value agar aman)
+  // ambil total ongkir/lain/diskon
   const getTotalFrom = id => {
-  const el = document.getElementById(`${id}_total`);
-  if (!el) return 0;
-  return cleanNumber(el.value || el.dataset.value);
-};
-
-const ongTot  = getTotalFrom('rOng');
-const lainTot = getTotalFrom('rLain');
-const discTot = getTotalFrom('rDisc');
+    const el = document.getElementById(`${id}_total`);
+    if (!el) return 0;
+    return cleanNumber(el.value || el.dataset.value);
+  };
+  const ongTot  = getTotalFrom('rOng');
+  const lainTot = getTotalFrom('rLain');
+  const discTot = getTotalFrom('rDisc');
 
   // bagi rata ongkir/lain (base + remainder)
   const splitEven = total => {
@@ -231,7 +248,13 @@ document.getElementById('addRow').addEventListener('click', ()=>addRow());
 document.getElementById('addPerson').addEventListener('click', addPerson);
 document.getElementById('clearAll').addEventListener('click', clearAll);
 document.getElementById('basis').addEventListener('change', recalc);
-// delegate global untuk jaga-jaga
+// PRINT
+document.getElementById('printBtn').addEventListener('click', ()=> {
+  // pastikan angka terakhir sudah dihitung
+  recalc();
+  window.print();
+});
+// delegate global
 document.addEventListener('input', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('keyup', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('change', e=>{ if(e.target.classList.contains('money')) recalc(); });
@@ -246,4 +269,3 @@ boot();
 </script>
 </body>
 </html>
-
