@@ -89,9 +89,26 @@
   .row-label { background: var(--accent); font-weight: 600; }
   .row-net { background: var(--hi); font-weight: 700; }
   .col-total { background: var(--blue); font-weight: 600; }
-  .note { font-size: 0.8rem; color: var(--muted); padding: 8px 16px 12px; }
+  .note { font-size: 0.8rem; color: var(--muted); padding: 8px 16px 4px; }
 
-  /* RESPONSIVE: ukuran tombol dan font mengecil di HP */
+  /* === Tambahan bagian Bayar ke === */
+  .payto {
+    padding: 12px 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px dashed var(--line);
+  }
+  .payto label { font-weight: 600; }
+  .payto input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  /* RESPONSIVE */
   @media (max-width: 768px) {
     body { padding: 8px; }
     .btn { flex: 1; min-width: 48%; font-size: 0.8rem; }
@@ -99,6 +116,8 @@
     h1 { font-size: 1rem; }
     table { font-size: 0.85rem; }
     th, td { padding: 6px; }
+    .payto { flex-direction: column; align-items: flex-start; }
+    .payto input { width: 100%; }
   }
 
   /* PRINT MODE */
@@ -115,6 +134,11 @@
     }
     td:first-child input.money { text-align: left; }
     .col-total, .row-label, .row-net { background: #fff !important; }
+    .payto input {
+      border: none !important;
+      background: transparent !important;
+      font-weight: 600;
+    }
   }
 </style>
 </head>
@@ -131,7 +155,7 @@
     </div>
     <div>
       Basis Diskon:
-      <select id="basis"><option>SUBTOTAL</option><option>TOTAL</option></select>
+      <select id="basis"><option>TOTAL</option><option>SUBTOTAL</option></select>
     </div>
   </div>
 
@@ -157,7 +181,15 @@
     </table>
   </div>
 
-  <div class="note">Ketik <b>10000</b>, <b>10.000</b>, atau <b>10,000</b> di kolom ongkir/diskon—semua dibaca sebagai 10.000.</div>
+  <div class="note">
+    Ketik <b>10000</b>, <b>10.000</b>, atau <b>10,000</b> di kolom ongkir/diskon — semua dibaca sebagai 10.000.
+  </div>
+
+  <!-- 🔹 Tambahan kolom Bayar ke -->
+  <div class="payto">
+    <label for="payto">Bayar ke:</label>
+    <input type="text" id="payto" placeholder="Nama / No. Rekening / E-wallet">
+  </div>
 </div>
 
 <script>
@@ -207,7 +239,9 @@ function rebuildFooter(){
 function addRow(label=''){
   const tr = document.createElement('tr');
   const first = document.createElement('td');
-  const nameIn = document.createElement('input'); nameIn.type='text'; nameIn.className='money'; nameIn.placeholder='Nama menu'; nameIn.style.textAlign='left'; nameIn.value=label;
+  const nameIn = document.createElement('input');
+  nameIn.type='text'; nameIn.className='money'; nameIn.placeholder='Nama menu';
+  nameIn.style.textAlign='left'; nameIn.value=label;
   first.appendChild(nameIn); tr.appendChild(first);
   names.forEach(()=>{
     const td = document.createElement('td');
