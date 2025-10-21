@@ -2,53 +2,119 @@
 <html lang="id">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>Debit Note Makan Siang</title>
 <style>
-  :root{--bg:#f8fafc;--card:#fff;--line:#e5e7eb;--ink:#0f172a;--muted:#64748b;--accent:#fef3c7;--hi:#fef08a;--blue:#e0f2fe}
-  *{box-sizing:border-box}
-  body{font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:24px}
-  .wrap{max-width:1120px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 24px rgba(2,6,23,.06)}
-  header{padding:18px;border-bottom:1px solid var(--line)} h1{margin:0;text-align:center;font-size:20px}
-  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 18px;border-bottom:1px dashed var(--line)}
-  .btn{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}
-  .btn:hover{background:#f8fafc}
-  select{padding:8px 10px;border:1px solid var(--line);border-radius:10px}
+  :root {
+    --bg:#f8fafc; --card:#fff; --line:#e5e7eb;
+    --ink:#0f172a; --muted:#64748b;
+    --accent:#fef3c7; --hi:#fef08a; --blue:#e0f2fe;
+  }
+  * { box-sizing:border-box; }
+  body {
+    font-family: Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    margin: 0;
+    padding: 16px;
+  }
 
-  .table-wrap{overflow:auto} /* <- scroll saat view biasa */
-  table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed} /* fixed layout for width control */
-  /* Set lebar kolom agar fit halaman (7 nama + 1 total = 8 kolom angka) */
-  thead th:first-child, tbody td:first-child, tfoot td:first-child{width:30%} /* kolom MENU */
-  thead th:not(:first-child), tfoot td:not(:first-child){width:calc(70%/8)} /* 8 kolom angka termasuk TOTAL */
+  .wrap {
+    max-width: 1120px;
+    margin: auto;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(2,6,23,.06);
+    overflow: hidden;
+  }
 
-  th,td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:right;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  th:first-child,td:first-child{text-align:left}
-  thead th{background:#fff;position:sticky;top:0;z-index:2}
-  input.money{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;text-align:right}
-  td:first-child input.money{text-align:left}
-  .row-label{background:var(--accent);font-weight:600}
-  .row-net{background:var(--hi);font-weight:700}
-  .col-total{background:var(--blue);font-weight:600}
-  .note{font-size:12px;color:var(--muted);padding:8px 18px 16px}
+  header { padding: 16px; border-bottom: 1px solid var(--line); text-align:center; }
+  h1 { margin: 0; font-size: 1.2rem; }
 
-  /* ====== PRINT STYLES ====== */
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    align-items: center; justify-content: space-between;
+    padding: 10px 16px; border-bottom: 1px dashed var(--line);
+  }
+
+  .btn {
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  .btn:hover { background: #f8fafc; }
+
+  select {
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: auto;
+    min-width: 650px;
+  }
+
+  th, td {
+    border-bottom: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: right;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { background: #fff; position: sticky; top: 0; z-index: 1; }
+  input.money {
+    width: 100%; padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: right;
+  }
+  td:first-child input.money { text-align: left; }
+
+  .row-label { background: var(--accent); font-weight: 600; }
+  .row-net { background: var(--hi); font-weight: 700; }
+  .col-total { background: var(--blue); font-weight: 600; }
+  .note { font-size: 0.8rem; color: var(--muted); padding: 8px 16px 12px; }
+
+  /* RESPONSIVE: ukuran tombol dan font mengecil di HP */
+  @media (max-width: 768px) {
+    body { padding: 8px; }
+    .btn { flex: 1; min-width: 48%; font-size: 0.8rem; }
+    select { font-size: 0.8rem; }
+    h1 { font-size: 1rem; }
+    table { font-size: 0.85rem; }
+    th, td { padding: 6px; }
+  }
+
+  /* PRINT MODE */
   @media print {
-    @page { size: A4 landscape; margin: 8mm; }  /* orientasi & margin */
-    body{padding:0;background:#fff;font-size:11px}
-    .wrap{max-width:none;width:100%;box-shadow:none;border:none;border-radius:0}
-    header{border:none;padding:0 0 6px 0}
-    .toolbar,.note{display:none !important}
-    .table-wrap{overflow:visible}         /* jangan ada scroll di print */
-    thead th{position:static}             /* non-sticky saat cetak */
-    th,td{padding:6px 6px}                /* rapatkan sedikit */
-    input.money{
-      border:none !important; outline:none !important; background:transparent !important;
-      padding:0 !important; width:100% !important; text-align:right;
+    @page { size: A4 landscape; margin: 8mm; }
+    body { padding: 0; background: #fff; font-size: 11px; }
+    .wrap { max-width: none; box-shadow: none; border: none; border-radius: 0; }
+    .toolbar, .note { display: none !important; }
+    .table-wrap { overflow: visible; }
+    thead th { position: static; }
+    input.money {
+      border: none !important; background: transparent !important;
+      text-align: right; padding: 0 !important;
     }
-    td:first-child input.money{text-align:left}
-    .col-total{background:#fff !important}
-    .row-label{background:#fff7d1 !important}
-    .row-net{background:#fff3a3 !important}
+    td:first-child input.money { text-align: left; }
+    .col-total, .row-label, .row-net { background: #fff !important; }
   }
 </style>
 </head>
@@ -57,13 +123,16 @@
   <header><h1>Debit Note Makan Siang</h1></header>
 
   <div class="toolbar">
-    <button class="btn" id="addRow">+ Tambah Menu</button>
-    <button class="btn" id="addPerson">+ Tambah Nama</button>
-    <button class="btn" id="clearAll">🧹 Bersihkan</button>
-    <button class="btn" id="printBtn">🖨️ Print / PDF</button>
-    <span style="margin-left:auto">Basis Diskon:
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="btn" id="addRow">+ Tambah Menu</button>
+      <button class="btn" id="addPerson">+ Tambah Nama</button>
+      <button class="btn" id="clearAll">🧹 Bersihkan</button>
+      <button class="btn" id="printBtn">🖨️ Print / PDF</button>
+    </div>
+    <div>
+      Basis Diskon:
       <select id="basis"><option>SUBTOTAL</option><option>TOTAL</option></select>
-    </span>
+    </div>
   </div>
 
   <div class="table-wrap">
@@ -92,7 +161,6 @@
 </div>
 
 <script>
-/* ===== Utils ===== */
 const fmtID = new Intl.NumberFormat('id-ID');
 const fmt = n => fmtID.format(Math.round(n));
 const cleanNumber = v => {
@@ -141,7 +209,6 @@ function addRow(label=''){
   const first = document.createElement('td');
   const nameIn = document.createElement('input'); nameIn.type='text'; nameIn.className='money'; nameIn.placeholder='Nama menu'; nameIn.style.textAlign='left'; nameIn.value=label;
   first.appendChild(nameIn); tr.appendChild(first);
-
   names.forEach(()=>{
     const td = document.createElement('td');
     const inp = document.createElement('input');
@@ -150,7 +217,6 @@ function addRow(label=''){
     inp.addEventListener('input', handle); inp.addEventListener('change', handle); inp.addEventListener('keyup', handle);
     td.appendChild(inp); tr.appendChild(td);
   });
-
   const total = document.createElement('td'); total.className='col-total'; total.textContent='0'; tr.appendChild(total);
   tbody.appendChild(tr);
 }
@@ -176,29 +242,23 @@ function clearAll(){
   recalc();
 }
 
-/* ===== Core calc ===== */
 function recalc(){
   const per = new Array(names.length).fill(0);
-
-  // hitung total per baris + subtotal per orang
   [...tbody.rows].forEach(tr=>{
-    const inputs = [...tr.querySelectorAll('td input.money')].slice(1); // skip nama menu
+    const inputs = [...tr.querySelectorAll('td input.money')].slice(1);
     const vals = inputs.map(i => cleanNumber(i.value || i.dataset.value));
     const rowTot = vals.reduce((a,b)=>a+b,0);
     tr.lastElementChild.textContent = fmt(rowTot);
     vals.forEach((v,i)=> per[i]+=v);
   });
 
-  // SUBTOTAL
   const gSub = per.reduce((a,b)=>a+b,0);
   per.forEach((v,i)=> (document.getElementById(`rSub_${i}`).textContent = fmt(v)));
   document.getElementById('rSub_total').textContent = fmt(gSub);
 
-  // peserta aktif
   const activeIdx = per.map((v,i)=> v>0?i:-1).filter(i=>i>=0);
   const nAct = activeIdx.length || 1;
 
-  // ambil total ongkir/lain/diskon
   const getTotalFrom = id => {
     const el = document.getElementById(`${id}_total`);
     if (!el) return 0;
@@ -208,7 +268,6 @@ function recalc(){
   const lainTot = getTotalFrom('rLain');
   const discTot = getTotalFrom('rDisc');
 
-  // bagi rata ongkir/lain (base + remainder)
   const splitEven = total => {
     const arr = new Array(names.length).fill(0);
     if(total===0 || nAct===0) return arr;
@@ -223,13 +282,11 @@ function recalc(){
   ongArr.forEach((v,i)=> (document.getElementById(`rOng_${i}`).textContent = fmt(v)));
   lainArr.forEach((v,i)=> (document.getElementById(`rLain_${i}`).textContent = fmt(v)));
 
-  // TOTAL
   const total = per.map((v,i)=> v + ongArr[i] + lainArr[i]);
   const gTot = total.reduce((a,b)=>a+b,0);
   total.forEach((v,i)=> (document.getElementById(`rTot_${i}`).textContent = fmt(v)));
   document.getElementById('rTot_total').textContent = fmt(gTot);
 
-  // Persentase (basis)
   const basis = (document.getElementById('basis').value || '').trim().toUpperCase();
   document.getElementById('badge').textContent = basis;
   const arr = basis==='TOTAL' ? total : per;
@@ -237,21 +294,18 @@ function recalc(){
   const pct = arr.map(v=> v/baseSum);
   pct.forEach((p,i)=> (document.getElementById(`rPct_${i}`).textContent = (p*100).toFixed(2)+'%'));
 
-  // Diskon proporsional + koreksi pembulatan
   let discArr = pct.map(p=> Math.round(discTot*p));
   let dSum = discArr.reduce((a,b)=>a+b,0);
   for(let i=0; dSum<discTot; i=(i+1)%names.length){ discArr[i]++; dSum++; }
   for(let i=0; dSum>discTot; i=(i+1)%names.length){ discArr[i]--; dSum--; }
   discArr.forEach((v,i)=> (document.getElementById(`rDisc_${i}`).textContent = fmt(v)));
 
-  // NET
   const net = total.map((v,i)=> v - discArr[i]);
   const gNet = net.reduce((a,b)=>a+b,0);
   net.forEach((v,i)=> (document.getElementById(`rNet_${i}`).textContent = fmt(v)));
   document.getElementById('rNet_total').textContent = fmt(gNet);
 }
 
-/* ===== Events & init ===== */
 document.getElementById('addRow').addEventListener('click', ()=>addRow());
 document.getElementById('addPerson').addEventListener('click', addPerson);
 document.getElementById('clearAll').addEventListener('click', clearAll);
@@ -261,7 +315,6 @@ document.addEventListener('input', e=>{ if(e.target.classList.contains('money'))
 document.addEventListener('keyup', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('change', e=>{ if(e.target.classList.contains('money')) recalc(); });
 
-// init
 function boot(){
   rebuildHeader(); rebuildFooter();
   for(let i=0;i<10;i++) addRow();
