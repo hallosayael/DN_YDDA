@@ -4,87 +4,37 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>Debit Note Makan Siang</title>
+
 <style>
-  :root {
-    --bg:#f8fafc; --card:#fff; --line:#e5e7eb;
-    --ink:#0f172a; --muted:#64748b;
-    --accent:#fef3c7; --hi:#fef08a; --blue:#e0f2fe;
-  }
+  :root { --bg:#f8fafc; --card:#fff; --line:#e5e7eb; --ink:#0f172a; --muted:#64748b; --accent:#fef3c7; --hi:#fef08a; --blue:#e0f2fe; }
   * { box-sizing:border-box; }
-  body {
-    font-family: Inter, system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    margin: 0;
-    padding: 16px;
-  }
+  body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); margin: 0; padding: 16px; }
 
   .wrap {
-    max-width: 1120px;
-    margin: auto;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    box-shadow: 0 8px 18px rgba(2,6,23,.06);
-    overflow: hidden;
+    max-width: 1120px; margin: auto; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: 0 8px 18px rgba(2,6,23,.06); overflow: hidden;
   }
 
   header { padding: 16px; border-bottom: 1px solid var(--line); text-align:center; }
   h1 { margin: 0; font-size: 1.2rem; }
 
   .toolbar {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    align-items: center; justify-content: space-between;
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between;
     padding: 10px 16px; border-bottom: 1px dashed var(--line);
   }
 
-  .btn {
-    padding: 8px 10px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
+  .btn { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; font-size: 0.9rem; }
   .btn:hover { background: #f8fafc; }
+  select { padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; }
 
-  select {
-    padding: 6px 8px;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-  }
+  .table-wrap { width: 100%; overflow-x: auto; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
 
-  .table-wrap {
-    width: 100%;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    table-layout: auto;
-    min-width: 650px;
-  }
-
-  th, td {
-    border-bottom: 1px solid var(--line);
-    padding: 8px 10px;
-    text-align: right;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: auto; min-width: 650px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: right; vertical-align: middle; white-space: nowrap; }
   th:first-child, td:first-child { text-align: left; }
   thead th { background: #fff; position: sticky; top: 0; z-index: 1; }
-  input.money {
-    width: 100%; padding: 6px 8px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    text-align: right;
-    text-transform: uppercase; /* 🔹 auto CAPSLOCK */
-  }
+
+  input.money { width: 100%; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; text-align: right; text-transform: uppercase; }
   td:first-child input.money { text-align: left; text-transform: uppercase; }
 
   .row-label { background: var(--accent); font-weight: 600; }
@@ -92,32 +42,16 @@
   .col-total { background: var(--blue); font-weight: 600; }
   .note { font-size: 0.8rem; color: var(--muted); padding: 8px 16px 4px; }
 
-  /* 🔹 Bagian Bayar ke */
-  .payto {
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-top: 2px solid var(--line);
-    background: #fffbea;
-  }
-  .payto label {
-    font-weight: 800;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-  }
-  .payto input {
-    flex: 1;
-    padding: 10px 12px;
-    border: 2px solid var(--line);
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    text-transform: uppercase; /* CAPSLOCK */
-    background: #fffdf0;
-  }
+  /* Bayar ke */
+  .payto { padding: 16px; display: flex; align-items: center; gap: 10px; border-top: 2px solid var(--line); background: #fffbea; }
+  .payto label { font-weight: 800; font-size: 1.1rem; text-transform: uppercase; }
+  .payto input { flex: 1; padding: 10px 12px; border: 2px solid var(--line); border-radius: 8px; font-weight: 700; font-size: 1.1rem; text-transform: uppercase; background: #fffdf0; }
 
-  /* RESPONSIVE */
+  /* Saat capture: nonaktifkan sticky & overflow agar tidak terpotong */
+  .capturing thead th { position: static !important; }
+  .capturing .table-wrap { overflow: visible !important; }
+
+  /* Responsive */
   @media (max-width: 768px) {
     body { padding: 8px; }
     .btn { flex: 1; min-width: 48%; font-size: 0.8rem; }
@@ -129,7 +63,7 @@
     .payto input { width: 100%; }
   }
 
-  /* PRINT MODE */
+  /* Print mode (PDF) */
   @media print {
     @page { size: A4 landscape; margin: 8mm; }
     body { padding: 0; background: #fff; font-size: 11px; }
@@ -137,29 +71,17 @@
     .toolbar, .note { display: none !important; }
     .table-wrap { overflow: visible; }
     thead th { position: static; }
-    input.money {
-      border: none !important; background: transparent !important;
-      text-align: right; padding: 0 !important;
-    }
+    input.money { border: none !important; background: transparent !important; text-align: right; padding: 0 !important; }
     td:first-child input.money { text-align: left; }
     .col-total, .row-label, .row-net { background: #fff !important; }
-    .payto {
-      border-top: 2px solid #000;
-      background: #fff;
-      padding-top: 10px;
-    }
-    .payto label, .payto input {
-      font-weight: 800;
-      font-size: 1.2rem;
-      text-transform: uppercase;
-      border: none !important;
-      background: transparent !important;
-    }
+    .payto { border-top: 2px solid #000; background: #fff; padding-top: 10px; }
+    .payto label, .payto input { font-weight: 800; font-size: 1.2rem; text-transform: uppercase; border: none !important; background: transparent !important; }
   }
 </style>
 </head>
+
 <body>
-<div class="wrap">
+<div class="wrap" id="pageWrap">
   <header><h1>Debit Note Makan Siang</h1></header>
 
   <div class="toolbar">
@@ -168,6 +90,8 @@
       <button class="btn" id="addPerson">+ Tambah Nama</button>
       <button class="btn" id="clearAll">🧹 Bersihkan</button>
       <button class="btn" id="printBtn">🖨️ Print / PDF</button>
+      <button class="btn" id="jpgTableBtn">📸 JPG (Tabel)</button>
+      <button class="btn" id="jpgPageBtn">📸 JPG (Halaman)</button>
     </div>
     <div>
       Basis Diskon:
@@ -206,6 +130,9 @@
     <input type="text" id="payto" placeholder="NAMA / NOMOR REKENING / E-WALLET">
   </div>
 </div>
+
+<!-- html2canvas -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha256-/wqk9FMgSLevU8nT8v3x2pgO2b7F8XrX0f2f2uF7l0o=" crossorigin="anonymous"></script>
 
 <script>
 const fmtID = new Intl.NumberFormat('id-ID');
@@ -358,11 +285,89 @@ function recalc(){
   document.getElementById('rNet_total').textContent = fmt(gNet);
 }
 
+/* ===== Util capture & clipboard ===== */
+async function copyCanvasToClipboard(canvas) {
+  // Banyak browser mengizinkan PNG lebih kompatibel untuk clipboard
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(async (blob) => {
+      if (!blob) return reject(new Error('Gagal membuat blob'));
+      try {
+        if (navigator.clipboard && window.ClipboardItem) {
+          const item = new ClipboardItem({ [blob.type]: blob });
+          await navigator.clipboard.write([item]);
+          resolve(true);
+        } else {
+          resolve(false); // tidak mendukung
+        }
+      } catch (e) {
+        resolve(false); // permission atau non-https
+      }
+    }, 'image/png', 0.95);
+  });
+}
+
+async function captureNodeAsJPG(node, filenameBase, options = {}) {
+  recalc();
+  const page = document.getElementById('pageWrap');
+  page.classList.add('capturing');
+
+  // Bentangkan sementara agar semua konten masuk
+  const origWidth = node.style.width;
+  const fullWidth = node.scrollWidth + 'px';
+  node.style.width = fullWidth;
+
+  const canvas = await html2canvas(node, {
+    backgroundColor: '#ffffff',
+    scale: options.scale || 2,
+    scrollX: 0,
+    scrollY: -window.scrollY,
+    width: node.scrollWidth,
+    height: node.scrollHeight,
+    useCORS: true
+  });
+
+  node.style.width = origWidth;
+  page.classList.remove('capturing');
+
+  // Download JPG
+  const dataURL = canvas.toDataURL('image/jpeg', 0.95);
+  const link = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+  link.download = `${filenameBase}-${stamp}.jpg`;
+  link.href = dataURL;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  // Auto-copy ke clipboard (PNG untuk compat)
+  const copied = await copyCanvasToClipboard(canvas);
+  if (!copied) {
+    console.warn('Clipboard copy tidak didukung / ditolak (butuh HTTPS & izin user).');
+    // Opsional: tampilkan toast sederhana
+    alert('Gambar sudah diunduh.\nCatatan: Auto-copy ke clipboard tidak didukung/ditolak oleh browser.\nGunakan HTTPS dan beri izin clipboard, atau copy manual dari file.');
+  } else {
+    // Opsional: konfirmasi singkat
+    // alert('Tersalin ke clipboard ✔️');
+  }
+}
+
+/* ===== Tombol capture ===== */
+async function captureTableAsJPG() {
+  await captureNodeAsJPG(document.getElementById('tbl'), 'debit-note-tabel', { scale: 2 });
+}
+async function capturePageAsJPG() {
+  await captureNodeAsJPG(document.getElementById('pageWrap'), 'debit-note-halaman', { scale: 2 });
+}
+
 document.getElementById('addRow').addEventListener('click', ()=>addRow());
 document.getElementById('addPerson').addEventListener('click', addPerson);
 document.getElementById('clearAll').addEventListener('click', clearAll);
 document.getElementById('basis').addEventListener('change', recalc);
 document.getElementById('printBtn').addEventListener('click', ()=>{ recalc(); window.print(); });
+
+document.getElementById('jpgTableBtn').addEventListener('click', captureTableAsJPG);
+document.getElementById('jpgPageBtn').addEventListener('click', capturePageAsJPG);
+
 document.addEventListener('input', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('keyup', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('change', e=>{ if(e.target.classList.contains('money')) recalc(); });
