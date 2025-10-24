@@ -78,6 +78,7 @@
   }
   th:first-child, td:first-child { text-align: left; }
   thead th { background: #fff; position: sticky; top: 0; z-index: 1; }
+
   input.money {
     width: 100%; padding: 6px 8px;
     border: 1px solid var(--line);
@@ -116,6 +117,11 @@
     text-transform: uppercase; /* CAPSLOCK */
     background: #fffdf0;
   }
+
+  /* Saat proses capture: nonaktifkan sticky & overflow agar gambar utuh */
+  body.capturing thead th { position: static !important; }
+  body.capturing .table-wrap { overflow: visible !important; }
+  body.capturing input.money { caret-color: transparent; }
 
   /* RESPONSIVE */
   @media (max-width: 768px) {
@@ -159,7 +165,7 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="capture-root">
   <header><h1>Debit Note Makan Siang</h1></header>
 
   <div class="toolbar">
@@ -168,6 +174,8 @@
       <button class="btn" id="addPerson">+ Tambah Nama</button>
       <button class="btn" id="clearAll">🧹 Bersihkan</button>
       <button class="btn" id="printBtn">🖨️ Print / PDF</button>
+      <!-- 🔹 Tombol Capture JPG -->
+      <button class="btn" id="jpgBtn">📸 JPG</button>
     </div>
     <div>
       Basis Diskon:
@@ -206,6 +214,9 @@
     <input type="text" id="payto" placeholder="NAMA / NOMOR REKENING / E-WALLET">
   </div>
 </div>
+
+<!-- 🔹 html2canvas CDN -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha256-CbV6f2RZ5oC7SkQ1t0+1FqP4B52I0wC1Qd2d5N7NqkI=" crossorigin="anonymous"></script>
 
 <script>
 const fmtID = new Intl.NumberFormat('id-ID');
@@ -358,11 +369,53 @@ function recalc(){
   document.getElementById('rNet_total').textContent = fmt(gNet);
 }
 
+/* ---------- Capture JPG ---------- */
+function pad2(n){ return String(n).padStart(2,'0'); }
+function timeStamp(){
+  const d = new Date();
+  return d.getFullYear()+''+pad2(d.getMonth()+1)+''+pad2(d.getDate())+'-'+pad2(d.getHours())+pad2(d.getMinutes())+pad2(d.getSeconds());
+}
+async function captureJPG(){
+  recalc(); // pastikan angka terupdate
+  document.body.classList.add('capturing');
+
+  const root = document.getElementById('capture-root');
+
+  // Skala tinggi agar tajam (hingga 2x devicePixelRatio, dibatasi 3)
+  const scale = Math.min((window.devicePixelRatio || 1) * 2, 3);
+
+  try {
+    const canvas = await html2canvas(root, {
+      backgroundColor: '#ffffff',
+      scale,
+      useCORS: true,
+      allowTaint: true,
+      windowWidth: document.documentElement.scrollWidth,
+      windowHeight: document.documentElement.scrollHeight
+    });
+
+    const dataURL = canvas.toDataURL('image/jpeg', 0.92);
+    const a = document.createElement('a');
+    a.href = dataURL;
+    a.download = `debit-note-${timeStamp()}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (err){
+    alert('Gagal membuat JPG: ' + (err?.message || err));
+    console.error(err);
+  } finally {
+    document.body.classList.remove('capturing');
+  }
+}
+/* ---------- End Capture JPG ---------- */
+
 document.getElementById('addRow').addEventListener('click', ()=>addRow());
 document.getElementById('addPerson').addEventListener('click', addPerson);
 document.getElementById('clearAll').addEventListener('click', clearAll);
 document.getElementById('basis').addEventListener('change', recalc);
 document.getElementById('printBtn').addEventListener('click', ()=>{ recalc(); window.print(); });
+document.getElementById('jpgBtn').addEventListener('click', captureJPG);
 document.addEventListener('input', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('keyup', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('change', e=>{ if(e.target.classList.contains('money')) recalc(); });
