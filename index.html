@@ -339,6 +339,8 @@ function clearAll(){
 
 function recalc(){
   const per = new Array(names.length).fill(0);
+
+  // --- Hitung subtotal per orang & total per baris ---
   [...tbody.rows].forEach(tr=>{
     const inputs = [...tr.querySelectorAll('td input.money')].slice(1);
     const vals = inputs.map(i => cleanNumber(i.value || i.dataset.value));
@@ -347,22 +349,27 @@ function recalc(){
     vals.forEach((v,i)=> per[i]+=v);
   });
 
+  // --- Tulis SUBTOTAL row ---
   const gSub = per.reduce((a,b)=>a+b,0);
   per.forEach((v,i)=> (document.getElementById(`rSub_${i}`).textContent = fmt(v)));
   document.getElementById('rSub_total').textContent = fmt(gSub);
 
+  // --- Siapa yang aktif (punya pesanan) untuk pembagian ongkir/lain ---
   const activeIdx = per.map((v,i)=> v>0?i:-1).filter(i=>i>=0);
   const nAct = activeIdx.length || 1;
 
+  // helper ambil angka dari input footer
   const getTotalFrom = id => {
     const el = document.getElementById(`${id}_total`);
     if (!el) return 0;
     return cleanNumber(el.value || el.dataset.value);
   };
+
   const ongTot  = getTotalFrom('rOng');
   const lainTot = getTotalFrom('rLain');
   const discTot = getTotalFrom('rDisc');
 
+  // --- Bagi ongkir & lain rata hanya ke yang aktif ---
   const splitEven = total => {
     const arr = new Array(names.length).fill(0);
     if(total===0 || nAct===0) return arr;
@@ -377,29 +384,71 @@ function recalc(){
   ongArr.forEach((v,i)=> (document.getElementById(`rOng_${i}`).textContent = fmt(v)));
   lainArr.forEach((v,i)=> (document.getElementById(`rLain_${i}`).textContent = fmt(v)));
 
+  // --- TOTAL per orang (subtotal + ongkir + lain) ---
   const total = per.map((v,i)=> v + ongArr[i] + lainArr[i]);
   const gTot = total.reduce((a,b)=>a+b,0);
   total.forEach((v,i)=> (document.getElementById(`rTot_${i}`).textContent = fmt(v)));
   document.getElementById('rTot_total').textContent = fmt(gTot);
 
+  // --- BASIS & Persentase tampilan ---
   const basis = (document.getElementById('basis').value || '').trim().toUpperCase();
   document.getElementById('badge').textContent = basis;
-  const arr = basis==='TOTAL' ? total : per;
-  const baseSum = arr.reduce((a,b)=>a+b,0) || 1;
-  const pct = arr.map(v=> v/baseSum);
+  const arr = (basis==='TOTAL') ? total : per;   // basis pembagian diskon
+  const baseSum = arr.reduce((a,b)=>a+b,0);
+
+  const pct = baseSum > 0 ? arr.map(v => v/baseSum) : new Array(names.length).fill(0);
   pct.forEach((p,i)=> (document.getElementById(`rPct_${i}`).textContent = (p*100).toFixed(2)+'%'));
 
-  let discArr = pct.map(p=> Math.round(discTot*p));
-  let dSum = discArr.reduce((a,b)=>a+b,0);
-  for(let i=0; dSum<discTot; i=(i+1)%names.length){ discArr[i]++; dSum++; }
-  for(let i=0; dSum>discTot; i=(i+1)%names.length){ discArr[i]--; dSum--; }
+  // --- Distribusi diskon: hanya ke yang arr[i] > 0, dan tidak boleh melebihi total[i] ---
+  let discArr = new Array(names.length).fill(0);
+  const eligibleIdx = arr.map((v,i)=> v>0 ? i : -1).filter(i=> i>=0);
+
+  if (discTot > 0 && baseSum > 0 && eligibleIdx.length > 0) {
+    // alokasi awal (floor)
+    discArr = arr.map(v => Math.floor(discTot * (v / baseSum)));
+
+    // sisa akibat pembulatan
+    let allocated = discArr.reduce((a,b)=>a+b,0);
+    let remain = discTot - allocated;
+
+    // bagi sisa 1-per-1 ke yang eligible
+    let k = 0;
+    while (remain > 0) {
+      const i = eligibleIdx[k % eligibleIdx.length];
+      discArr[i]++; remain--; k++;
+    }
+
+    // clamp: tidak boleh melebihi total orang tsb
+    let overflow = 0;
+    discArr = discArr.map((d,i)=>{
+      const cap = total[i];
+      if (d > cap) { overflow += (d - cap); return cap; }
+      return d;
+    });
+
+    // redistribusi overflow ke yang masih punya ruang
+    if (overflow > 0) {
+      const roomIdx = eligibleIdx.filter(i => discArr[i] < total[i]);
+      let j = 0;
+      while (overflow > 0 && roomIdx.length > 0) {
+        const i = roomIdx[j % roomIdx.length];
+        if (discArr[i] < total[i]) { discArr[i]++; overflow--; }
+        j++;
+      }
+      // jika masih ada overflow, biarkan (lebih aman daripada menjadi negatif)
+    }
+  }
+
+  // tampilkan diskon per orang
   discArr.forEach((v,i)=> (document.getElementById(`rDisc_${i}`).textContent = fmt(v)));
 
-  const net = total.map((v,i)=> v - discArr[i]);
+  // --- NET (tidak negatif) ---
+  const net = total.map((v,i)=> Math.max(0, v - discArr[i]));
   const gNet = net.reduce((a,b)=>a+b,0);
   net.forEach((v,i)=> (document.getElementById(`rNet_${i}`).textContent = fmt(v)));
   document.getElementById('rNet_total').textContent = fmt(gNet);
 }
+
 
 /* ---------- Capture JPG ---------- */
 async function captureJPG() {
@@ -466,6 +515,7 @@ boot();
 </script>
 </body>
 </html>
+
 
 
 
