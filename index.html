@@ -372,18 +372,10 @@ function recalc(){
 }
 
 /* ---------- Capture JPG ---------- */
-function pad2(n){ return String(n).padStart(2,'0'); }
-function timeStamp(){
-  const d = new Date();
-  return d.getFullYear()+''+pad2(d.getMonth()+1)+''+pad2(d.getDate())+'-'+pad2(d.getHours())+pad2(d.getMinutes())+pad2(d.getSeconds());
-}
-async function captureJPG(){
+async function captureJPG() {
   recalc(); // pastikan angka terupdate
   document.body.classList.add('capturing');
-
   const root = document.getElementById('capture-root');
-
-  // Skala tinggi agar tajam (hingga 2x devicePixelRatio, dibatasi 3)
   const scale = Math.min((window.devicePixelRatio || 1) * 2, 3);
 
   try {
@@ -396,14 +388,28 @@ async function captureJPG(){
       windowHeight: document.documentElement.scrollHeight
     });
 
+    // ---- Simpan sebagai JPG ----
     const dataURL = canvas.toDataURL('image/jpeg', 0.92);
     const a = document.createElement('a');
     a.href = dataURL;
-    a.download = `debit-note-${timeStamp()}.jpg`;
+    a.download = `debit-note-${Date.now()}.jpg`;
     document.body.appendChild(a);
     a.click();
     a.remove();
-  } catch (err){
+
+    // ---- Auto copy ke clipboard ----
+    if (navigator.clipboard && window.ClipboardItem) {
+      const blob = await (await fetch(dataURL)).blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({ [blob.type]: blob })
+      ]);
+      console.log("✅ Gambar disalin ke clipboard!");
+      alert("✅ JPG berhasil diunduh dan otomatis disalin ke clipboard!");
+    } else {
+      alert("📥 JPG berhasil diunduh.\nNamun fitur auto-copy tidak didukung di browser ini.");
+    }
+
+  } catch (err) {
     alert('Gagal membuat JPG: ' + (err?.message || err));
     console.error(err);
   } finally {
@@ -431,4 +437,5 @@ boot();
 </script>
 </body>
 </html>
+
 
