@@ -5,6 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>Debit Note Makan Siang</title>
 <style>
+  /* ==== FIX TEKS INPUT KEGUNTING DI BAWAH ==== */
+:root{
+  --inp-h: 40px;          /* tinggi input yang nyaman (38–42px juga oke) */
+  --inp-fs: 14px;         /* ukuran font input */
+}
+
+/* beri ruang ekstra pada sel agar input tidak kepres */
+th, td { padding: 10px 10px; }
+
+/* kunci metrik input agar konsisten di semua zoom/OS */
+input.money{
+  font-size: var(--inp-fs);
+  height: var(--inp-h);
+  line-height: 1.25;      /* jangan 1.0; bikin lebih lega */
+  padding: 8px 12px 10px; /* ekstra 2px di bawah supaya aman */
+  border-radius: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;         /* hindari baseline aneh di inline-input */
+}
+
+/* saat print kita balik ke auto agar tidak kepotong */
+@media print {
+  input.money{
+    height: auto !important;
+    line-height: 1.2 !important;
+    padding: 0 !important;
+  }
+}
+
   :root {
     --bg:#f8fafc; --card:#fff; --line:#e5e7eb;
     --ink:#0f172a; --muted:#64748b;
@@ -436,6 +466,7 @@ boot();
 </script>
 </body>
 </html>
+
 
 
 
