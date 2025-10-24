@@ -215,8 +215,10 @@
   </div>
 </div>
 
-<!-- 🔹 html2canvas CDN -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha256-CbV6f2RZ5oC7SkQ1t0+1FqP4B52I0wC1Qd2d5N7NqkI=" crossorigin="anonymous"></script>
+<!-- pakai CDNJS, tanpa integrity -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        referrerpolicy="no-referrer">
+</script>
 
 <script>
 const fmtID = new Intl.NumberFormat('id-ID');
@@ -429,3 +431,4 @@ boot();
 </script>
 </body>
 </html>
+
