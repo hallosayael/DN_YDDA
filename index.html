@@ -373,7 +373,7 @@ function recalc(){
 
 /* ---------- Capture JPG ---------- */
 async function captureJPG() {
-  recalc(); // pastikan angka terupdate
+  recalc();
   document.body.classList.add('capturing');
   const root = document.getElementById('capture-root');
   const scale = Math.min((window.devicePixelRatio || 1) * 2, 3);
@@ -388,25 +388,24 @@ async function captureJPG() {
       windowHeight: document.documentElement.scrollHeight
     });
 
-    // ---- Simpan sebagai JPG ----
-    const dataURL = canvas.toDataURL('image/jpeg', 0.92);
+    // --- 1) DOWNLOAD sebagai JPG (pakai blob biar hemat memori) ---
+    const jpgBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+    const jpgUrl = URL.createObjectURL(jpgBlob);
     const a = document.createElement('a');
-    a.href = dataURL;
+    a.href = jpgUrl;
     a.download = `debit-note-${Date.now()}.jpg`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(jpgUrl);
 
-    // ---- Auto copy ke clipboard ----
+    // --- 2) COPY ke clipboard sebagai PNG (format yang didukung) ---
     if (navigator.clipboard && window.ClipboardItem) {
-      const blob = await (await fetch(dataURL)).blob();
+      const pngBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
       await navigator.clipboard.write([
-        new ClipboardItem({ [blob.type]: blob })
+        new ClipboardItem({ 'image/png': pngBlob })
       ]);
-      console.log("✅ Gambar disalin ke clipboard!");
-      alert("✅ JPG berhasil diunduh dan otomatis disalin ke clipboard!");
+      alert('✅ JPG diunduh & gambar (PNG) sudah disalin ke clipboard. Tinggal paste di WA/Docs!');
     } else {
-      alert("📥 JPG berhasil diunduh.\nNamun fitur auto-copy tidak didukung di browser ini.");
+      alert('📥 JPG diunduh. Browser ini belum mendukung auto-copy gambar ke clipboard.');
     }
 
   } catch (err) {
@@ -437,5 +436,6 @@ boot();
 </script>
 </body>
 </html>
+
 
 
