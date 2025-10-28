@@ -265,6 +265,8 @@ const tbody = document.getElementById('tbody');
 function rebuildHeader(){
   document.getElementById('hdr').innerHTML =
     '<th>MENU</th>' + names.map(n=>`<th>${n}</th>`).join('') + '<th class="col-total">TOTAL</th>';
+  // 🔹 aktifkan rename setelah header jadi
+  hookHeaderRename();
 }
 function rebuildFooter(){
   const rows = [
@@ -506,6 +508,36 @@ document.addEventListener('input', e=>{ if(e.target.classList.contains('money'))
 document.addEventListener('keyup', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('change', e=>{ if(e.target.classList.contains('money')) recalc(); });
 
+  // --- Aktifkan edit nama kolom di header ---
+function hookHeaderRename(){
+  const hdr = document.getElementById('hdr');
+  const ths = [...hdr.cells];
+  ths.forEach((th, idx) => {
+    // Lewati kolom pertama (MENU) dan terakhir (TOTAL)
+    if (idx === 0 || idx === ths.length - 1) return;
+
+    th.style.cursor = 'pointer';
+    th.title = 'Klik untuk ganti nama';
+
+    // Hindari dobel-attach saat rebuild
+    th.dataset.renamable = '1';
+    th.onclick = () => {
+      const i = idx - 1;                  // index dalam array names
+      const current = names[i] || '';
+      const nm = prompt('Ganti nama orang:', current);
+      if (nm == null) return;             // batal
+      const newName = nm.trim().toUpperCase();
+      if (!newName) return;               // kosong, abaikan
+
+      names[i] = newName;                 // update sumber kebenaran
+      th.textContent = newName;           // update label header-nya
+
+      // Tidak perlu rebuild footer/body karena id footer berbasis index,
+      // dan kolom data tetap di posisi yang sama.
+    };
+  });
+}
+
 function boot(){
   rebuildHeader(); rebuildFooter();
   for(let i=0;i<10;i++) addRow();
@@ -515,6 +547,7 @@ boot();
 </script>
 </body>
 </html>
+
 
 
 
