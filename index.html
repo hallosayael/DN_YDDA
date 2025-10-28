@@ -503,6 +503,10 @@ async function captureJPG() {
   const scale = Math.min((window.devicePixelRatio || 1) * 2, 3);
 
   try {
+    // pastikan nilai sudah uppercase sebelum dirender html2canvas
+enforceUppercase(document.getElementById('titleExtra'));
+enforceUppercase(document.getElementById('payto'));
+
     const canvas = await html2canvas(root, {
       backgroundColor: '#ffffff',
       scale,
@@ -545,7 +549,14 @@ document.getElementById('addRow').addEventListener('click', ()=>addRow());
 document.getElementById('addPerson').addEventListener('click', addPerson);
 document.getElementById('clearAll').addEventListener('click', clearAll);
 document.getElementById('basis').addEventListener('change', recalc);
-document.getElementById('printBtn').addEventListener('click', ()=>{ recalc(); window.print(); });
+/*document.getElementById('printBtn').addEventListener('click', ()=>{ recalc(); window.print(); });*/
+document.getElementById('printBtn').addEventListener('click', ()=>{
+  recalc();
+  enforceUppercase(document.getElementById('titleExtra'));
+  enforceUppercase(document.getElementById('payto'));
+  window.print();
+});
+  
 document.getElementById('jpgBtn').addEventListener('click', captureJPG);
 document.addEventListener('input', e=>{ if(e.target.classList.contains('money')) recalc(); });
 document.addEventListener('keyup', e=>{ if(e.target.classList.contains('money')) recalc(); });
@@ -581,6 +592,31 @@ function hookHeaderRename(){
   });
 }
 
+  // ==== Paksa NILAI input benar-benar UPPERCASE (bukan sekadar tampilan) ====
+function enforceUppercase(el){
+  if (!el) return;
+  el.value = (el.value || '').toUpperCase();   // ubah nilai yang ditampilkan
+  el.setAttribute('value', el.value);          // sinkronkan attribute untuk renderer
+}
+
+// hookup untuk field judul & bayar-ke
+function hookUppercaseInputs(){
+  const titleEl = document.getElementById('titleExtra');
+  const paytoEl = document.getElementById('payto');
+
+  // helper attach
+  [titleEl, paytoEl].forEach(el => {
+    if (!el) return;
+    const toUpper = () => enforceUppercase(el);
+    el.addEventListener('input',  toUpper);
+    el.addEventListener('change', toUpper);
+    el.addEventListener('blur',   toUpper);
+    // inisialisasi awal
+    enforceUppercase(el);
+  });
+}
+hookUppercaseInputs();
+
 function boot(){
   rebuildHeader(); rebuildFooter();
   for(let i=0;i<10;i++) addRow();
@@ -590,6 +626,7 @@ boot();
 </script>
 </body>
 </html>
+
 
 
 
