@@ -617,6 +617,67 @@ function hookUppercaseInputs(){
 }
 hookUppercaseInputs();
 
+  // ==== Paksa semua input benar-benar huruf besar (nilai & tampilan) ====
+function enforceUppercase(el) {
+  if (!el) return;
+  el.value = (el.value || '').toUpperCase();
+  el.setAttribute('value', el.value);
+}
+
+// === Hook untuk field judul, bayar-ke, dan kolom MENU ===
+function hookUppercaseInputs() {
+  const titleEl = document.getElementById('titleExtra');
+  const paytoEl = document.getElementById('payto');
+
+  const toUpper = e => enforceUppercase(e.target);
+
+  [titleEl, paytoEl].forEach(el => {
+    if (!el) return;
+    el.addEventListener('input', toUpper);
+    el.addEventListener('change', toUpper);
+    el.addEventListener('blur', toUpper);
+    enforceUppercase(el);
+  });
+
+  // 🔹 Untuk semua kolom MENU yang sudah ada
+  document.querySelectorAll('td:first-child input.money').forEach(inp => {
+    inp.addEventListener('input', toUpper);
+    inp.addEventListener('change', toUpper);
+    inp.addEventListener('blur', toUpper);
+    enforceUppercase(inp);
+  });
+}
+
+// Jalankan hook saat awal
+hookUppercaseInputs();
+
+// 🔹 Pastikan juga setiap kali tambah baris, hook ulang
+const oldAddRow = addRow;
+addRow = function(label='') {
+  oldAddRow(label);
+  hookUppercaseInputs(); // supaya kolom baru ikut auto-caps
+};
+
+// 🔹 Sebelum capture atau print: pastikan semua input sudah uppercase
+function forceAllUppercaseBeforeRender() {
+  enforceUppercase(document.getElementById('titleExtra'));
+  enforceUppercase(document.getElementById('payto'));
+  document.querySelectorAll('td:first-child input.money').forEach(enforceUppercase);
+}
+
+// ganti listener Print & JPG agar panggil ini
+document.getElementById('printBtn').addEventListener('click', ()=>{
+  recalc();
+  forceAllUppercaseBeforeRender();
+  window.print();
+});
+
+const oldCaptureJPG = captureJPG;
+captureJPG = async function(){
+  forceAllUppercaseBeforeRender();
+  await oldCaptureJPG();
+};
+
 function boot(){
   rebuildHeader(); rebuildFooter();
   for(let i=0;i<10;i++) addRow();
@@ -626,6 +687,7 @@ boot();
 </script>
 </body>
 </html>
+
 
 
 
