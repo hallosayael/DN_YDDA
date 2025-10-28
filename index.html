@@ -68,6 +68,44 @@ input.money{
     padding: 10px 16px; border-bottom: 1px dashed var(--line);
   }
 
+  /* ====== Editable Title ====== */
+.title h1{
+  margin: 0;
+  font-size: 1.2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+
+#titleExtra{
+  border: none;
+  border-bottom: 2px solid var(--line);
+  background: transparent;
+  font: inherit;
+  padding: 0 4px 2px;
+  min-width: 160px;
+  text-transform: uppercase;       /* CAPSLOCK otomatis */
+  outline: none;
+}
+#titleExtra::placeholder{ color: var(--muted); }
+
+/* Mobile rapih */
+@media (max-width: 768px){
+  .title h1{ font-size: 1rem; }
+  #titleExtra{ min-width: 120px; }
+}
+
+/* Print & Capture-friendly: tampil seperti teks polos */
+@media print{
+  #titleExtra{
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}
+
+
   .btn {
     padding: 8px 10px;
     border: 1px solid var(--line);
@@ -196,7 +234,12 @@ input.money{
 </head>
 <body>
 <div class="wrap" id="capture-root">
-  <header><h1>Debit Note Makan Siang</h1></header>
+  <header class="title">
+  <h1>
+    Debit Note
+    <input id="titleExtra" type="text" placeholder="ISI DI SINI" />
+  </h1>
+</header>
 
   <div class="toolbar">
     <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -547,6 +590,7 @@ boot();
 </script>
 </body>
 </html>
+
 
 
 
