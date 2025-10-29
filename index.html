@@ -229,6 +229,24 @@ input.money{
       border: none !important;
       background: transparent !important;
     }
+
+    /* Row kontrol gulung */
+.more-row td{
+  background: #f1f5f9;
+  text-align: center !important;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--line);
+  user-select: none;
+}
+.more-row td:hover{ background:#e2e8f0; }
+
+/* Saat print: sembunyikan baris kontrol */
+@media print{
+  .more-row{ display:none !important; }
+}
+
   }
 </style>
 </head>
@@ -304,6 +322,74 @@ const cleanNumber = v => {
 
 let names = ["ICHA","WISI","SARAH","MOLI","SANTI","ANGEL"];
 const tbody = document.getElementById('tbody');
+// --- MULAI: fitur gulung baris MENU ---
+let visibleRows = 5;         // jumlah baris MENU yang ditampilkan
+let moreRowEl = null;        // elemen baris kontrol "Tampilkan 5 lagi"
+
+function ensureMoreRow(){
+  if (moreRowEl && moreRowEl.isConnected) return moreRowEl;
+  moreRowEl = document.createElement('tr');
+  moreRowEl.className = 'more-row';
+  const td = document.createElement('td');
+  td.colSpan = names.length + 2; // MENU + (nama...) + TOTAL
+  td.textContent = 'TAMPILKAN 5 LAGI ▾';
+  moreRowEl.appendChild(td);
+  moreRowEl.addEventListener('click', toggleMoreRows);
+  return moreRowEl;
+}
+
+function updateMoreRowLabel(totalRows){
+  const td = moreRowEl?.firstElementChild;
+  if (!td) return;
+  if (visibleRows >= totalRows){
+    td.textContent = 'GULUNG KEMBALI ▴';
+  } else {
+    // tampilkan sisa (maks 5)
+    const sisa = Math.min(5, totalRows - visibleRows);
+    td.textContent = `TAMPILKAN ${sisa} LAGI ▾`;
+  }
+}
+
+function applyRowVisibility(){
+  const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
+  const total = rows.length;
+
+  // tampilkan hanya "visibleRows" pertama
+  rows.forEach((tr, i) => {
+    tr.style.display = (i < visibleRows) ? '' : 'none';
+  });
+
+  // selipkan/posisikan baris kontrol setelah batch yang terlihat
+  const mr = ensureMoreRow();
+  mr.firstElementChild.colSpan = names.length + 2; // jaga-colspan saat tambah nama
+
+  if (total > 5){
+    // tempatkan baris kontrol tepat setelah baris terakhir yang terlihat
+    const anchorIdx = Math.min(visibleRows, total) - 1;
+    const anchor = rows[anchorIdx] || rows[total - 1];
+    if (anchor && anchor.nextSibling !== mr){
+      tbody.insertBefore(mr, anchor.nextSibling);
+    }
+    mr.style.display = ''; // tampakkan kontrol
+    updateMoreRowLabel(total);
+  } else {
+    // jika <=5 baris, sembunyikan kontrol
+    mr.style.display = 'none';
+    if (!mr.isConnected) tbody.appendChild(mr);
+  }
+}
+
+function toggleMoreRows(){
+  const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
+  const total = rows.length;
+  if (visibleRows >= total){
+    visibleRows = 5;                 // gulung kembali
+  } else {
+    visibleRows = Math.min(total, visibleRows + 5); // buka 5 lagi
+  }
+  applyRowVisibility();
+}
+// --- SELESAI: fitur gulung baris MENU ---
 
 function rebuildHeader(){
   document.getElementById('hdr').innerHTML =
@@ -366,6 +452,8 @@ function addPerson(){
   names.push(nm.toUpperCase());
   rebuildHeader(); rebuildFooter();
   [...tbody.rows].forEach(tr=>{
+    if (tr.classList.contains('more-row')) return;  // ⬅️ skip kontrol
+    
     const td = document.createElement('td');
     const inp= document.createElement('input');
     inp.type='text'; inp.className='money'; inp.placeholder='0';
@@ -374,6 +462,7 @@ function addPerson(){
     td.appendChild(inp);
     tr.insertBefore(td, tr.lastElementChild);
   });
+  applyRowVisibility(); // perbarui colspan & penempatan kontrol
   recalc();
 }
 
@@ -387,6 +476,8 @@ function recalc(){
 
   // --- Hitung subtotal per orang & total per baris ---
   [...tbody.rows].forEach(tr=>{
+    if (tr.classList.contains('more-row')) return; // ⬅️ abaikan baris kontrol
+    
     const inputs = [...tr.querySelectorAll('td input.money')].slice(1);
     const vals = inputs.map(i => cleanNumber(i.value || i.dataset.value));
     const rowTot = vals.reduce((a,b)=>a+b,0);
@@ -656,6 +747,7 @@ const oldAddRow = addRow;
 addRow = function(label='') {
   oldAddRow(label);
   hookUppercaseInputs(); // supaya kolom baru ikut auto-caps
+  applyRowVisibility();         // ⬅️ tampilkan sesuai gulung
 };
 
 // 🔹 Sebelum capture atau print: pastikan semua input sudah uppercase
@@ -681,12 +773,14 @@ captureJPG = async function(){
 function boot(){
   rebuildHeader(); rebuildFooter();
   for(let i=0;i<10;i++) addRow();
+  applyRowVisibility();   // ⬅️ atur tampil 5 dulu
   recalc();
 }
 boot();
 </script>
 </body>
 </html>
+
 
 
 
