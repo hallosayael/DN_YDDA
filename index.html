@@ -325,6 +325,7 @@ const tbody = document.getElementById('tbody');
 // --- MULAI: fitur gulung baris MENU ---
 let visibleRows = 5;         // jumlah baris MENU yang ditampilkan
 let moreRowEl = null;        // elemen baris kontrol "Tampilkan 5 lagi"
+let autoExpandOnAdd = true;   // ⬅️ hanya TRUE saat interaksi user
 
 function ensureMoreRow(){
   if (moreRowEl && moreRowEl.isConnected) return moreRowEl;
@@ -750,26 +751,20 @@ hookUppercaseInputs();
 //  applyRowVisibility();         // ⬅️ tampilkan sesuai gulung
 //};
 
-  // Override addRow agar baris baru langsung ikut terlihat (+1)
+ // Override addRow: baris baru langsung terlihat (+1) HANYA jika autoExpandOnAdd = true
 const oldAddRow = addRow;
-addRow = function(label='') {
-  // 1) Tambah baris seperti biasa
+addRow = function(label=''){
   oldAddRow(label);
 
-  // 2) Hitung total baris MENU (abaikan baris kontrol "SHOW 5 MORE")
   const totalRows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row')).length;
 
-  // 3) Naikkan jatah tampil 1 baris (maksimal = totalRows)
-  visibleRows = Math.min(totalRows, (visibleRows || 0) + 1);
-
-  // 4) Terapkan visibilitas + hook CAPS jika ada
+  if (autoExpandOnAdd) {
+    visibleRows = Math.min(totalRows, (visibleRows || 0) + 1);
+  }
   applyRowVisibility();
   if (typeof hookUppercaseInputs === 'function') hookUppercaseInputs();
-
-  // 5) Recalc supaya total di kanan ikut ter-update
   recalc();
 };
-
 
 // 🔹 Sebelum capture atau print: pastikan semua input sudah uppercase
 function forceAllUppercaseBeforeRender() {
@@ -793,14 +788,21 @@ captureJPG = async function(){
 
 function boot(){
   rebuildHeader(); rebuildFooter();
-  for(let i=0;i<10;i++) addRow();
-  applyRowVisibility();   // ⬅️ atur tampil 5 dulu
+
+  autoExpandOnAdd = false;          // ⬅️ matikan auto expand saat inisialisasi
+  for (let i=0;i<10;i++) addRow();  // pakai addRow biasa, tapi tidak expand
+  autoExpandOnAdd = true;           // ⬅️ aktifkan lagi untuk interaksi user
+
+  visibleRows = 5;                  // tampilan awal 5 baris
+  applyRowVisibility();
   recalc();
 }
+
 boot();
 </script>
 </body>
 </html>
+
 
 
 
