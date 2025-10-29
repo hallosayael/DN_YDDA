@@ -743,12 +743,33 @@ function hookUppercaseInputs() {
 hookUppercaseInputs();
 
 // 🔹 Pastikan juga setiap kali tambah baris, hook ulang
+// const oldAddRow = addRow;
+// addRow = function(label='') {
+//  oldAddRow(label);
+//  hookUppercaseInputs(); // supaya kolom baru ikut auto-caps
+//  applyRowVisibility();         // ⬅️ tampilkan sesuai gulung
+//};
+
+  // Override addRow agar baris baru langsung ikut terlihat (+1)
 const oldAddRow = addRow;
 addRow = function(label='') {
+  // 1) Tambah baris seperti biasa
   oldAddRow(label);
-  hookUppercaseInputs(); // supaya kolom baru ikut auto-caps
-  applyRowVisibility();         // ⬅️ tampilkan sesuai gulung
+
+  // 2) Hitung total baris MENU (abaikan baris kontrol "SHOW 5 MORE")
+  const totalRows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row')).length;
+
+  // 3) Naikkan jatah tampil 1 baris (maksimal = totalRows)
+  visibleRows = Math.min(totalRows, (visibleRows || 0) + 1);
+
+  // 4) Terapkan visibilitas + hook CAPS jika ada
+  applyRowVisibility();
+  if (typeof hookUppercaseInputs === 'function') hookUppercaseInputs();
+
+  // 5) Recalc supaya total di kanan ikut ter-update
+  recalc();
 };
+
 
 // 🔹 Sebelum capture atau print: pastikan semua input sudah uppercase
 function forceAllUppercaseBeforeRender() {
@@ -780,6 +801,7 @@ boot();
 </script>
 </body>
 </html>
+
 
 
 
