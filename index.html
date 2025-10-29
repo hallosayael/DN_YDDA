@@ -332,7 +332,7 @@ function ensureMoreRow(){
   moreRowEl.className = 'more-row';
   const td = document.createElement('td');
   td.colSpan = names.length + 2; // MENU + (nama...) + TOTAL
-  td.textContent = 'TAMPILKAN 5 LAGI ▾';
+  td.textContent = 'CLICK HERE FOR ADD MORE ▾';
   moreRowEl.appendChild(td);
   moreRowEl.addEventListener('click', toggleMoreRows);
   return moreRowEl;
@@ -342,7 +342,7 @@ function updateMoreRowLabel(totalRows){
   const td = moreRowEl?.firstElementChild;
   if (!td) return;
   if (visibleRows >= totalRows){
-    td.textContent = 'GULUNG KEMBALI ▴';
+    td.textContent = 'ROLL BACK ▴';
   } else {
     // tampilkan sisa (maks 5)
     const sisa = Math.min(5, totalRows - visibleRows);
@@ -780,6 +780,7 @@ boot();
 </script>
 </body>
 </html>
+
 
 
 
