@@ -8,7 +8,7 @@
     
     <style>
         :root {
-            --primary: #6366f1; /* Indigo */
+            --primary: #6366f1;
             --primary-dark: #4f46e5;
             --success: #10b981;
             --danger: #ef4444;
@@ -24,43 +24,25 @@
         * { box-sizing: border-box; transition: background 0.2s, border 0.2s, box-shadow 0.2s; }
         
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text-main);
             margin: 0;
             padding: 24px;
-            line-height: 1.5;
         }
 
-        /* Container Pro Look */
         .wrap {
-            max-width: 1200px;
+            max-width: 1150px;
             margin: auto;
             background: var(--card);
             border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             border: 1px solid var(--border);
         }
 
-        header {
-            padding: 24px;
-            background: #fff;
-            border-bottom: 1px solid var(--border);
-            text-align: center;
-        }
-
-        h1 {
-            margin: 0;
-            font-weight: 800;
-            font-size: 1.5rem;
-            color: var(--text-main);
-            letter-spacing: -0.025em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
+        header { padding: 24px; background: #fff; border-bottom: 1px solid var(--border); text-align: center; }
+        h1 { margin: 0; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.025em; display: flex; align-items: center; justify-content: center; gap: 12px; }
 
         #titleExtra {
             border: none;
@@ -71,12 +53,9 @@
             padding: 2px 8px;
             outline: none;
             text-transform: uppercase;
-            width: 200px;
+            width: 250px;
         }
 
-        #titleExtra:focus { border-color: var(--primary); }
-
-        /* Toolbar Styling */
         .toolbar {
             padding: 16px 24px;
             background: #f8fafc;
@@ -98,34 +77,19 @@
             cursor: pointer;
             border: 1px solid var(--border);
             background: white;
-            color: var(--text-main);
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
 
-        .btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
-        
+        .btn:hover { background: #f1f5f9; }
         .btn-primary { background: var(--primary); color: white; border: none; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        
         .btn-success { background: var(--success); color: white; border: none; }
-        .btn-success:hover { opacity: 0.9; }
-
         .btn-danger { color: var(--danger); }
-        .btn-danger:hover { background: #fef2f2; border-color: #fecaca; }
 
-        select {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            font-weight: 600;
-            outline: none;
-        }
+        select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 600; outline: none; }
 
-        /* Table Styling */
         .table-wrap { width: 100%; overflow-x: auto; }
-        
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         
         th {
@@ -135,90 +99,39 @@
             font-weight: 700;
             text-transform: uppercase;
             color: var(--text-muted);
-            letter-spacing: 0.05em;
             border-bottom: 2px solid var(--border);
             text-align: right;
         }
 
         th:first-child { text-align: left; padding-left: 24px; }
-
-        td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; text-align: right; }
+        td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: right; }
         td:first-child { padding-left: 24px; text-align: left; }
 
         input.money {
-            width: 100%;
-            height: var(--inp-h);
-            font-size: var(--inp-fs);
-            font-family: inherit;
-            font-weight: 500;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0 10px;
-            text-align: right;
-            outline: none;
+            width: 100%; height: var(--inp-h); font-size: var(--inp-fs);
+            font-weight: 500; border: 1px solid var(--border);
+            border-radius: 8px; padding: 0 10px; text-align: right; outline: none;
         }
 
         input.money:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
         
-        /* Row Highlighting */
         .row-label { background: #fdfbf7; font-weight: 600; }
         .row-tot { background: #f5f3ff; font-weight: 700; color: var(--primary); }
         .row-net { background: #eff6ff; font-weight: 800; font-size: 1.1rem; color: #1d4ed8; }
-        .col-total { font-weight: 700; color: var(--text-main); background: #f8fafc; }
+        .col-total { font-weight: 700; background: #f8fafc; }
 
-        /* Footer Section */
-        .payto {
-            padding: 24px;
-            background: #fff;
-            border-top: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+        .payto { padding: 24px; background: #fff; border-top: 2px solid var(--border); display: flex; align-items: center; gap: 16px; }
+        .payto label { font-weight: 700; font-size: 0.95rem; }
+        .payto input { flex: 1; padding: 14px 18px; border: 2px solid var(--primary); border-radius: 12px; font-weight: 700; background: #f5f3ff; color: var(--primary-dark); outline: none; text-transform: uppercase; }
 
-        .payto label { font-weight: 700; font-size: 0.95rem; color: var(--text-main); }
-        .payto input {
-            flex: 1;
-            padding: 14px 18px;
-            border: 2px solid var(--primary);
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 1rem;
-            background: #f5f3ff;
-            color: var(--primary-dark);
-            outline: none;
-        }
-
-        .more-row td {
-            background: #fff;
-            text-align: center !important;
-            padding: 12px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: var(--primary);
-            cursor: pointer;
-            border-bottom: 1px solid var(--border);
-        }
-        .more-row td:hover { background: #f5f3ff; }
+        .more-row td { background: #fff; text-align: center !important; padding: 12px; font-weight: 700; font-size: 0.8rem; color: var(--primary); cursor: pointer; border-bottom: 1px solid var(--border); }
 
         .note { padding: 16px 24px; font-size: 0.75rem; color: var(--text-muted); background: #fff; font-style: italic; }
 
-        /* Media Queries & Print */
-        @media (max-width: 768px) {
-            body { padding: 12px; }
-            .toolbar { flex-direction: column; align-items: flex-start; }
-            .btn-group { width: 100%; }
-            .btn { flex: 1; justify-content: center; }
-            .payto { flex-direction: column; align-items: flex-start; }
-        }
-
         @media print {
-            body { background: white; padding: 0; }
-            .wrap { border: none; box-shadow: none; }
             .toolbar, .btn, .more-row, .note { display: none !important; }
-            input.money, #titleExtra, #payto { border: none !important; padding: 0 !important; }
-            .payto { border-top: 2px solid #000; }
-            .row-tot, .row-net, .col-total { background: transparent !important; }
+            .wrap { border: none; box-shadow: none; }
+            input.money, #titleExtra, #payto { border: none !important; background: transparent !important; }
         }
     </style>
 </head>
@@ -226,26 +139,20 @@
 
 <div class="wrap" id="capture-root">
     <header>
-        <h1>
-            DEBIT NOTE
-            <input id="titleExtra" type="text" placeholder="KLIK UNTUK ISI JUDUL" />
-        </h1>
+        <h1>DEBIT NOTE <input id="titleExtra" type="text" placeholder="KLIK UNTUK ISI JUDUL" /></h1>
     </header>
 
     <div class="toolbar">
         <div class="btn-group">
-            <button class="btn btn-primary" id="addRow"><span>+</span> Menu</button>
-            <button class="btn btn-primary" id="addPerson"><span>+</span> Nama</button>
-            <button class="btn btn-success" id="printBtn">🖨️ PDF</button>
-            <button class="btn btn-success" id="jpgBtn">📸 JPG</button>
+            <button class="btn btn-primary" id="addRow">+ Menu</button>
+            <button class="btn btn-primary" id="addPerson">+ Nama</button>
+            <button class="btn btn-success" id="printBtn">🖨️ PDF / Print</button>
+            <button class="btn btn-success" id="jpgBtn">📸 Simpan JPG</button>
             <button class="btn btn-danger" id="clearAll">🧹 Reset</button>
         </div>
         <div style="font-size: 0.875rem; font-weight: 600;">
             Basis Diskon: 
-            <select id="basis">
-                <option>TOTAL</option>
-                <option>SUBTOTAL</option>
-            </select>
+            <select id="basis"><option>TOTAL</option><option>SUBTOTAL</option></select>
         </div>
     </div>
 
@@ -270,503 +177,230 @@
         </table>
     </div>
 
-    <div class="note">
-        * Gunakan format angka biasa (contoh: 15000). Sistem otomatis mengonversi tampilan ke format Rupiah.
-    </div>
+    <div class="note">* Isikan nominal tanpa titik. Data otomatis disimpan saat Anda mengetik.</div>
 
     <div class="payto">
-        <label for="payto">INSTRUKSI PEMBAYARAN:</label>
-        <input type="text" id="payto" placeholder="CONTOH: BCA 12345678 A/N JONI ATAU GOPAY 0812...">
+        <label for="payto">BAYAR KE:</label>
+        <input type="text" id="payto" placeholder="NAMA / REKENING / GOPAY / OVO">
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 const fmtID = new Intl.NumberFormat('id-ID');
 const fmt = n => fmtID.format(Math.round(n));
 const cleanNumber = v => {
-  const s = (v ?? '').toString().replace(/[^\d\-]/g,'');
-  if (!s || s === '-' || s === '--') return 0;
-  return parseInt(s,10) || 0;
+    const s = (v ?? '').toString().replace(/[^\d\-]/g,'');
+    if (!s || s === '-' || s === '--') return 0;
+    return parseInt(s,10) || 0;
 };
 
 let names = ["ICHA","WISI","SARAH","MOLI","SANTI","ANGEL"];
 const tbody = document.getElementById('tbody');
-// --- MULAI: fitur gulung baris MENU ---
-let visibleRows = 5;         // jumlah baris MENU yang ditampilkan
-let moreRowEl = null;        // elemen baris kontrol "Tampilkan 5 lagi"
-let autoExpandOnAdd = true;   // ⬅️ hanya TRUE saat interaksi user
+let visibleRows = 5;
+let moreRowEl = null;
+let autoExpandOnAdd = true;
 
 function ensureMoreRow(){
-  if (moreRowEl && moreRowEl.isConnected) return moreRowEl;
-  moreRowEl = document.createElement('tr');
-  moreRowEl.className = 'more-row';
-  const td = document.createElement('td');
-  td.colSpan = names.length + 2; // MENU + (nama...) + TOTAL
-  td.textContent = 'CLICK HERE FOR ADD MORE ▾';
-  moreRowEl.appendChild(td);
-  moreRowEl.addEventListener('click', toggleMoreRows);
-  return moreRowEl;
+    if (moreRowEl && moreRowEl.isConnected) return moreRowEl;
+    moreRowEl = document.createElement('tr');
+    moreRowEl.className = 'more-row';
+    const td = document.createElement('td');
+    td.colSpan = names.length + 2;
+    td.textContent = 'SHOW MORE ▾';
+    moreRowEl.appendChild(td);
+    moreRowEl.addEventListener('click', toggleMoreRows);
+    return moreRowEl;
 }
 
 function updateMoreRowLabel(totalRows){
-  const td = moreRowEl?.firstElementChild;
-  if (!td) return;
-  if (visibleRows >= totalRows){
-    td.textContent = 'ROLL BACK ▴';
-  } else {
-    // tampilkan sisa (maks 5)
-    const sisa = Math.min(5, totalRows - visibleRows);
-    td.textContent = `SHOW ${sisa} MORE ▾`;
-  }
+    const td = moreRowEl?.firstElementChild;
+    if (!td) return;
+    if (visibleRows >= totalRows) td.textContent = 'ROLL BACK ▴';
+    else td.textContent = `SHOW ${Math.min(5, totalRows - visibleRows)} MORE ▾`;
 }
 
 function applyRowVisibility(){
-  const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
-  const total = rows.length;
-
-  // tampilkan hanya "visibleRows" pertama
-  rows.forEach((tr, i) => {
-    tr.style.display = (i < visibleRows) ? '' : 'none';
-  });
-
-  // selipkan/posisikan baris kontrol setelah batch yang terlihat
-  const mr = ensureMoreRow();
-  mr.firstElementChild.colSpan = names.length + 2; // jaga-colspan saat tambah nama
-
-  if (total > 5){
-    // tempatkan baris kontrol tepat setelah baris terakhir yang terlihat
-    const anchorIdx = Math.min(visibleRows, total) - 1;
-    const anchor = rows[anchorIdx] || rows[total - 1];
-    if (anchor && anchor.nextSibling !== mr){
-      tbody.insertBefore(mr, anchor.nextSibling);
+    const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
+    const total = rows.length;
+    rows.forEach((tr, i) => { tr.style.display = (i < visibleRows) ? '' : 'none'; });
+    const mr = ensureMoreRow();
+    mr.firstElementChild.colSpan = names.length + 2;
+    if (total > 5){
+        const anchorIdx = Math.min(visibleRows, total) - 1;
+        const anchor = rows[anchorIdx];
+        if (anchor) tbody.insertBefore(mr, anchor.nextSibling);
+        mr.style.display = '';
+        updateMoreRowLabel(total);
+    } else {
+        mr.style.display = 'none';
     }
-    mr.style.display = ''; // tampakkan kontrol
-    updateMoreRowLabel(total);
-  } else {
-    // jika <=5 baris, sembunyikan kontrol
-    mr.style.display = 'none';
-    if (!mr.isConnected) tbody.appendChild(mr);
-  }
 }
 
 function toggleMoreRows(){
-  const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
-  const total = rows.length;
-  if (visibleRows >= total){
-    visibleRows = 5;                 // gulung kembali
-  } else {
-    visibleRows = Math.min(total, visibleRows + 5); // buka 5 lagi
-  }
-  applyRowVisibility();
+    const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
+    if (visibleRows >= rows.length) visibleRows = 5;
+    else visibleRows += 5;
+    applyRowVisibility();
 }
-// --- SELESAI: fitur gulung baris MENU ---
 
 function rebuildHeader(){
-  document.getElementById('hdr').innerHTML =
-    '<th>MENU</th>' + names.map(n=>`<th>${n}</th>`).join('') + '<th class="col-total">TOTAL</th>';
-  // 🔹 aktifkan rename setelah header jadi
-  hookHeaderRename();
+    document.getElementById('hdr').innerHTML = '<th>MENU ITEM</th>' + names.map(n=>`<th>${n}</th>`).join('') + '<th class="col-total">TOTAL</th>';
+    hookHeaderRename();
 }
+
 function rebuildFooter(){
-  const rows = [
-    ['rSub', false],
-    ['rOng',  true],
-    ['rLain', true],
-    ['rTot', false],
-    ['rPct', false],
-    ['rDisc', true],
-    ['rNet', false],
-  ];
-  rows.forEach(([id,withInp])=>{
-    const tr = document.getElementById(id);
-    tr.querySelectorAll('td:not(:first-child)').forEach(td=>td.remove());
-    names.forEach((_,i)=>{
-      const td = document.createElement('td'); td.id = `${id}_${i}`; tr.appendChild(td);
+    const rows = [['rSub', false], ['rOng', true], ['rLain', true], ['rTot', false], ['rPct', false], ['rDisc', true], ['rNet', false]];
+    rows.forEach(([id,withInp])=>{
+        const tr = document.getElementById(id);
+        tr.querySelectorAll('td:not(:first-child)').forEach(td=>td.remove());
+        names.forEach((_,i)=>{
+            const td = document.createElement('td'); td.id = `${id}_${i}`; tr.appendChild(td);
+        });
+        const tdTot = document.createElement('td'); tdTot.className='col-total';
+        if(withInp){
+            const inp = document.createElement('input');
+            inp.type = 'text'; inp.className='money'; inp.placeholder='0'; inp.id = `${id}_total`;
+            const handle = e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); };
+            inp.addEventListener('input', handle);
+            tdTot.appendChild(inp);
+        } else tdTot.id = `${id}_total`;
+        tr.appendChild(tdTot);
     });
-    const tdTot = document.createElement('td'); tdTot.className='col-total';
-    if(withInp){
-      const inp = document.createElement('input');
-      inp.type = 'text'; inp.className='money'; inp.placeholder='0'; inp.id = `${id}_total`;
-      const handle = e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); };
-      inp.addEventListener('input', handle); inp.addEventListener('change', handle); inp.addEventListener('keyup', handle);
-      tdTot.appendChild(inp);
-    } else tdTot.id = `${id}_total`;
-    tr.appendChild(tdTot);
-  });
 }
 
 function addRow(label=''){
-  const tr = document.createElement('tr');
-  const first = document.createElement('td');
-  const nameIn = document.createElement('input');
-  nameIn.type='text'; nameIn.className='money';
-  nameIn.placeholder='Nama menu';
-  nameIn.style.textAlign='left';
-  nameIn.style.textTransform='uppercase';
-  nameIn.value=label;
-  first.appendChild(nameIn); tr.appendChild(first);
-  names.forEach(()=>{
-    const td = document.createElement('td');
-    const inp = document.createElement('input');
-    inp.type='text'; inp.className='money'; inp.placeholder='0';
-    const handle = e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); };
-    inp.addEventListener('input', handle); inp.addEventListener('change', handle); inp.addEventListener('keyup', handle);
-    td.appendChild(inp); tr.appendChild(td);
-  });
-  const total = document.createElement('td'); total.className='col-total'; total.textContent='0'; tr.appendChild(total);
-  tbody.appendChild(tr);
+    const tr = document.createElement('tr');
+    const first = document.createElement('td');
+    const nameIn = document.createElement('input');
+    nameIn.type='text'; nameIn.className='money'; nameIn.placeholder='Nama menu';
+    nameIn.style.textAlign='left'; nameIn.value=label;
+    nameIn.addEventListener('input', e => { e.target.value = e.target.value.toUpperCase(); });
+    first.appendChild(nameIn); tr.appendChild(first);
+    names.forEach(()=>{
+        const td = document.createElement('td');
+        const inp = document.createElement('input');
+        inp.type='text'; inp.className='money'; inp.placeholder='0';
+        inp.addEventListener('input', e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); });
+        td.appendChild(inp); tr.appendChild(td);
+    });
+    const total = document.createElement('td'); total.className='col-total'; total.textContent='0'; tr.appendChild(total);
+    tbody.appendChild(tr);
+
+    if(autoExpandOnAdd) {
+        const totalRows = [...tbody.rows].filter(r => !r.classList.contains('more-row')).length;
+        visibleRows = Math.min(totalRows, visibleRows + 1);
+        applyRowVisibility();
+    }
 }
 
 function addPerson(){
-  const nm = prompt('Nama orang baru?'); if(!nm) return;
-  names.push(nm.toUpperCase());
-  rebuildHeader(); rebuildFooter();
-  [...tbody.rows].forEach(tr=>{
-    if (tr.classList.contains('more-row')) return;  // ⬅️ skip kontrol
-    
-    const td = document.createElement('td');
-    const inp= document.createElement('input');
-    inp.type='text'; inp.className='money'; inp.placeholder='0';
-    const handle = e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); };
-    inp.addEventListener('input', handle); inp.addEventListener('change', handle); inp.addEventListener('keyup', handle);
-    td.appendChild(inp);
-    tr.insertBefore(td, tr.lastElementChild);
-  });
-  applyRowVisibility(); // perbarui colspan & penempatan kontrol
-  recalc();
-}
-
-function clearAll(){
-  document.querySelectorAll('input.money').forEach(i=>{ i.value=''; i.dataset.value='0'; });
-  recalc();
+    const nm = prompt('Nama orang baru?'); if(!nm) return;
+    names.push(nm.toUpperCase());
+    rebuildHeader(); rebuildFooter();
+    [...tbody.rows].forEach(tr=>{
+        if (tr.classList.contains('more-row')) return;
+        const td = document.createElement('td');
+        const inp= document.createElement('input');
+        inp.type='text'; inp.className='money'; inp.placeholder='0';
+        inp.addEventListener('input', e => { e.target.dataset.value = String(cleanNumber(e.target.value)); recalc(); });
+        td.appendChild(inp);
+        tr.insertBefore(td, tr.lastElementChild);
+    });
+    applyRowVisibility(); recalc();
 }
 
 function recalc(){
-  const per = new Array(names.length).fill(0);
-
-  // --- Hitung subtotal per orang & total per baris ---
-  [...tbody.rows].forEach(tr=>{
-    if (tr.classList.contains('more-row')) return; // ⬅️ abaikan baris kontrol
-    
-    const inputs = [...tr.querySelectorAll('td input.money')].slice(1);
-    const vals = inputs.map(i => cleanNumber(i.value || i.dataset.value));
-    const rowTot = vals.reduce((a,b)=>a+b,0);
-    tr.lastElementChild.textContent = fmt(rowTot);
-    vals.forEach((v,i)=> per[i]+=v);
-  });
-
-  // --- Tulis SUBTOTAL row ---
-  const gSub = per.reduce((a,b)=>a+b,0);
-  per.forEach((v,i)=> (document.getElementById(`rSub_${i}`).textContent = fmt(v)));
-  document.getElementById('rSub_total').textContent = fmt(gSub);
-
-  // --- Siapa yang aktif (punya pesanan) untuk pembagian ongkir/lain ---
-  const activeIdx = per.map((v,i)=> v>0?i:-1).filter(i=>i>=0);
-  const nAct = activeIdx.length || 1;
-
-  // helper ambil angka dari input footer
-  const getTotalFrom = id => {
-    const el = document.getElementById(`${id}_total`);
-    if (!el) return 0;
-    return cleanNumber(el.value || el.dataset.value);
-  };
-
-  const ongTot  = getTotalFrom('rOng');
-  const lainTot = getTotalFrom('rLain');
-  const discTot = getTotalFrom('rDisc');
-
-  // --- Bagi ongkir & lain rata hanya ke yang aktif ---
-  const splitEven = total => {
-    const arr = new Array(names.length).fill(0);
-    if(total===0 || nAct===0) return arr;
-    const base = Math.floor(total / nAct);
-    let rem = total - base*nAct;
-    activeIdx.forEach(i=> arr[i]=base);
-    for(let k=0;k<rem;k++) arr[activeIdx[k % nAct]]++;
-    return arr;
-  };
-  const ongArr  = splitEven(ongTot);
-  const lainArr = splitEven(lainTot);
-  ongArr.forEach((v,i)=> (document.getElementById(`rOng_${i}`).textContent = fmt(v)));
-  lainArr.forEach((v,i)=> (document.getElementById(`rLain_${i}`).textContent = fmt(v)));
-
-  // --- TOTAL per orang (subtotal + ongkir + lain) ---
-  const total = per.map((v,i)=> v + ongArr[i] + lainArr[i]);
-  const gTot = total.reduce((a,b)=>a+b,0);
-  total.forEach((v,i)=> (document.getElementById(`rTot_${i}`).textContent = fmt(v)));
-  document.getElementById('rTot_total').textContent = fmt(gTot);
-
-  // --- BASIS & Persentase tampilan ---
-  const basis = (document.getElementById('basis').value || '').trim().toUpperCase();
-  document.getElementById('badge').textContent = basis;
-  const arr = (basis==='TOTAL') ? total : per;   // basis pembagian diskon
-  const baseSum = arr.reduce((a,b)=>a+b,0);
-
-  const pct = baseSum > 0 ? arr.map(v => v/baseSum) : new Array(names.length).fill(0);
-  pct.forEach((p,i)=> (document.getElementById(`rPct_${i}`).textContent = (p*100).toFixed(2)+'%'));
-
-  // --- Distribusi diskon: hanya ke yang arr[i] > 0, dan tidak boleh melebihi total[i] ---
-  let discArr = new Array(names.length).fill(0);
-  const eligibleIdx = arr.map((v,i)=> v>0 ? i : -1).filter(i=> i>=0);
-
-  if (discTot > 0 && baseSum > 0 && eligibleIdx.length > 0) {
-    // alokasi awal (floor)
-    discArr = arr.map(v => Math.floor(discTot * (v / baseSum)));
-
-    // sisa akibat pembulatan
-    let allocated = discArr.reduce((a,b)=>a+b,0);
-    let remain = discTot - allocated;
-
-    // bagi sisa 1-per-1 ke yang eligible
-    let k = 0;
-    while (remain > 0) {
-      const i = eligibleIdx[k % eligibleIdx.length];
-      discArr[i]++; remain--; k++;
-    }
-
-    // clamp: tidak boleh melebihi total orang tsb
-    let overflow = 0;
-    discArr = discArr.map((d,i)=>{
-      const cap = total[i];
-      if (d > cap) { overflow += (d - cap); return cap; }
-      return d;
+    const per = new Array(names.length).fill(0);
+    [...tbody.rows].forEach(tr=>{
+        if (tr.classList.contains('more-row')) return;
+        const inputs = [...tr.querySelectorAll('td input.money')].slice(1);
+        const vals = inputs.map(i => cleanNumber(i.value || i.dataset.value));
+        const rowTot = vals.reduce((a,b)=>a+b,0);
+        tr.lastElementChild.textContent = fmt(rowTot);
+        vals.forEach((v,i)=> per[i]+=v);
     });
 
-    // redistribusi overflow ke yang masih punya ruang
-    if (overflow > 0) {
-      const roomIdx = eligibleIdx.filter(i => discArr[i] < total[i]);
-      let j = 0;
-      while (overflow > 0 && roomIdx.length > 0) {
-        const i = roomIdx[j % roomIdx.length];
-        if (discArr[i] < total[i]) { discArr[i]++; overflow--; }
-        j++;
-      }
-      // jika masih ada overflow, biarkan (lebih aman daripada menjadi negatif)
-    }
-  }
+    const gSub = per.reduce((a,b)=>a+b,0);
+    per.forEach((v,i)=> (document.getElementById(`rSub_${i}`).textContent = fmt(v)));
+    document.getElementById('rSub_total').textContent = fmt(gSub);
 
-  // tampilkan diskon per orang
-  discArr.forEach((v,i)=> (document.getElementById(`rDisc_${i}`).textContent = fmt(v)));
+    const activeIdx = per.map((v,i)=> v>0?i:-1).filter(i=>i>=0);
+    const nAct = activeIdx.length || 1;
 
-  // --- NET (tidak negatif) ---
-  const net = total.map((v,i)=> Math.max(0, v - discArr[i]));
-  const gNet = net.reduce((a,b)=>a+b,0);
-  net.forEach((v,i)=> (document.getElementById(`rNet_${i}`).textContent = fmt(v)));
-  document.getElementById('rNet_total').textContent = fmt(gNet);
-}
+    const ongTot = cleanNumber(document.getElementById('rOng_total').value);
+    const lainTot = cleanNumber(document.getElementById('rLain_total').value);
+    const discTot = cleanNumber(document.getElementById('rDisc_total').value);
 
-
-/* ---------- Capture JPG ---------- */
-async function captureJPG() {
-  recalc();
-  document.body.classList.add('capturing');
-  const root = document.getElementById('capture-root');
-  const scale = Math.min((window.devicePixelRatio || 1) * 2, 3);
-
-  try {
-    // pastikan nilai sudah uppercase sebelum dirender html2canvas
-enforceUppercase(document.getElementById('titleExtra'));
-enforceUppercase(document.getElementById('payto'));
-
-    const canvas = await html2canvas(root, {
-      backgroundColor: '#ffffff',
-      scale,
-      useCORS: true,
-      allowTaint: true,
-      windowWidth: document.documentElement.scrollWidth,
-      windowHeight: document.documentElement.scrollHeight
-    });
-
-    // --- 1) DOWNLOAD sebagai JPG (pakai blob biar hemat memori) ---
-    const jpgBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
-    const jpgUrl = URL.createObjectURL(jpgBlob);
-    const a = document.createElement('a');
-    a.href = jpgUrl;
-    a.download = `debit-note-${Date.now()}.jpg`;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(jpgUrl);
-
-    // --- 2) COPY ke clipboard sebagai PNG (format yang didukung) ---
-    if (navigator.clipboard && window.ClipboardItem) {
-      const pngBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': pngBlob })
-      ]);
-      alert('✅ JPG diunduh & gambar (PNG) sudah disalin ke clipboard. Tinggal paste di WA/Docs!');
-    } else {
-      alert('📥 JPG diunduh. Browser ini belum mendukung auto-copy gambar ke clipboard.');
-    }
-
-  } catch (err) {
-    alert('Gagal membuat JPG: ' + (err?.message || err));
-    console.error(err);
-  } finally {
-    document.body.classList.remove('capturing');
-  }
-}
-/* ---------- End Capture JPG ---------- */
-
-document.getElementById('addRow').addEventListener('click', ()=>addRow());
-document.getElementById('addPerson').addEventListener('click', addPerson);
-document.getElementById('clearAll').addEventListener('click', clearAll);
-document.getElementById('basis').addEventListener('change', recalc);
-/*document.getElementById('printBtn').addEventListener('click', ()=>{ recalc(); window.print(); });*/
-document.getElementById('printBtn').addEventListener('click', ()=>{
-  recalc();
-  enforceUppercase(document.getElementById('titleExtra'));
-  enforceUppercase(document.getElementById('payto'));
-  window.print();
-});
-  
-document.getElementById('jpgBtn').addEventListener('click', captureJPG);
-document.addEventListener('input', e=>{ if(e.target.classList.contains('money')) recalc(); });
-document.addEventListener('keyup', e=>{ if(e.target.classList.contains('money')) recalc(); });
-document.addEventListener('change', e=>{ if(e.target.classList.contains('money')) recalc(); });
-
-  // --- Aktifkan edit nama kolom di header ---
-function hookHeaderRename(){
-  const hdr = document.getElementById('hdr');
-  const ths = [...hdr.cells];
-  ths.forEach((th, idx) => {
-    // Lewati kolom pertama (MENU) dan terakhir (TOTAL)
-    if (idx === 0 || idx === ths.length - 1) return;
-
-    th.style.cursor = 'pointer';
-    th.title = 'Klik untuk ganti nama';
-
-    // Hindari dobel-attach saat rebuild
-    th.dataset.renamable = '1';
-    th.onclick = () => {
-      const i = idx - 1;                  // index dalam array names
-      const current = names[i] || '';
-      const nm = prompt('Ganti nama orang:', current);
-      if (nm == null) return;             // batal
-      const newName = nm.trim().toUpperCase();
-      if (!newName) return;               // kosong, abaikan
-
-      names[i] = newName;                 // update sumber kebenaran
-      th.textContent = newName;           // update label header-nya
-
-      // Tidak perlu rebuild footer/body karena id footer berbasis index,
-      // dan kolom data tetap di posisi yang sama.
+    const splitEven = total => {
+        const arr = new Array(names.length).fill(0);
+        if(total===0) return arr;
+        const base = Math.floor(total / nAct);
+        let rem = total - base*nAct;
+        activeIdx.forEach(i=> arr[i]=base);
+        for(let k=0;k<rem;k++) arr[activeIdx[k % nAct]]++;
+        return arr;
     };
-  });
+
+    const ongArr = splitEven(ongTot);
+    const lainArr = splitEven(lainTot);
+    ongArr.forEach((v,i)=> (document.getElementById(`rOng_${i}`).textContent = fmt(v)));
+    lainArr.forEach((v,i)=> (document.getElementById(`rLain_${i}`).textContent = fmt(v)));
+
+    const total = per.map((v,i)=> v + ongArr[i] + lainArr[i]);
+    const gTot = total.reduce((a,b)=>a+b,0);
+    total.forEach((v,i)=> (document.getElementById(`rTot_${i}`).textContent = fmt(v)));
+    document.getElementById('rTot_total').textContent = fmt(gTot);
+
+    const basis = document.getElementById('basis').value;
+    const arr = (basis==='TOTAL') ? total : per;
+    const baseSum = arr.reduce((a,b)=>a+b,0);
+    const pct = baseSum > 0 ? arr.map(v => v/baseSum) : new Array(names.length).fill(0);
+    pct.forEach((p,i)=> (document.getElementById(`rPct_${i}`).textContent = (p*100).toFixed(2)+'%'));
+
+    let discArr = pct.map(p => Math.floor(discTot * p));
+    discArr.forEach((v,i)=> (document.getElementById(`rDisc_${i}`).textContent = fmt(v)));
+
+    const net = total.map((v,i)=> Math.max(0, v - discArr[i]));
+    net.forEach((v,i)=> (document.getElementById(`rNet_${i}`).textContent = fmt(v)));
+    document.getElementById('rNet_total').textContent = fmt(net.reduce((a,b)=>a+b,0));
 }
 
-  // ==== Paksa NILAI input benar-benar UPPERCASE (bukan sekadar tampilan) ====
-function enforceUppercase(el){
-  if (!el) return;
-  el.value = (el.value || '').toUpperCase();   // ubah nilai yang ditampilkan
-  el.setAttribute('value', el.value);          // sinkronkan attribute untuk renderer
+function hookHeaderRename(){
+    const ths = [...document.getElementById('hdr').cells];
+    ths.forEach((th, idx) => {
+        if (idx === 0 || idx === ths.length - 1) return;
+        th.onclick = () => {
+            const nm = prompt('Ganti nama:', names[idx-1]);
+            if (nm) { names[idx-1] = nm.toUpperCase(); rebuildHeader(); renderTableContent(); }
+        };
+    });
 }
 
-// hookup untuk field judul & bayar-ke
-function hookUppercaseInputs(){
-  const titleEl = document.getElementById('titleExtra');
-  const paytoEl = document.getElementById('payto');
-
-  // helper attach
-  [titleEl, paytoEl].forEach(el => {
-    if (!el) return;
-    const toUpper = () => enforceUppercase(el);
-    el.addEventListener('input',  toUpper);
-    el.addEventListener('change', toUpper);
-    el.addEventListener('blur',   toUpper);
-    // inisialisasi awal
-    enforceUppercase(el);
-  });
-}
-hookUppercaseInputs();
-
-  // ==== Paksa semua input benar-benar huruf besar (nilai & tampilan) ====
-function enforceUppercase(el) {
-  if (!el) return;
-  el.value = (el.value || '').toUpperCase();
-  el.setAttribute('value', el.value);
+async function captureJPG() {
+    document.body.classList.add('capturing');
+    const canvas = await html2canvas(document.getElementById('capture-root'), { scale: 2 });
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL("image/jpeg", 0.9);
+    a.download = `DebitNote_${Date.now()}.jpg`;
+    a.click();
+    document.body.classList.remove('capturing');
 }
 
-// === Hook untuk field judul, bayar-ke, dan kolom MENU ===
-function hookUppercaseInputs() {
-  const titleEl = document.getElementById('titleExtra');
-  const paytoEl = document.getElementById('payto');
-
-  const toUpper = e => enforceUppercase(e.target);
-
-  [titleEl, paytoEl].forEach(el => {
-    if (!el) return;
-    el.addEventListener('input', toUpper);
-    el.addEventListener('change', toUpper);
-    el.addEventListener('blur', toUpper);
-    enforceUppercase(el);
-  });
-
-  // 🔹 Untuk semua kolom MENU yang sudah ada
-  document.querySelectorAll('td:first-child input.money').forEach(inp => {
-    inp.addEventListener('input', toUpper);
-    inp.addEventListener('change', toUpper);
-    inp.addEventListener('blur', toUpper);
-    enforceUppercase(inp);
-  });
-}
-
-// Jalankan hook saat awal
-hookUppercaseInputs();
-
-// 🔹 Pastikan juga setiap kali tambah baris, hook ulang
-// const oldAddRow = addRow;
-// addRow = function(label='') {
-//  oldAddRow(label);
-//  hookUppercaseInputs(); // supaya kolom baru ikut auto-caps
-//  applyRowVisibility();         // ⬅️ tampilkan sesuai gulung
-//};
-
- // Override addRow: baris baru langsung terlihat (+1) HANYA jika autoExpandOnAdd = true
-const oldAddRow = addRow;
-addRow = function(label=''){
-  oldAddRow(label);
-
-  const totalRows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row')).length;
-
-  if (autoExpandOnAdd) {
-    visibleRows = Math.min(totalRows, (visibleRows || 0) + 1);
-  }
-  applyRowVisibility();
-  if (typeof hookUppercaseInputs === 'function') hookUppercaseInputs();
-  recalc();
-};
-
-// 🔹 Sebelum capture atau print: pastikan semua input sudah uppercase
-function forceAllUppercaseBeforeRender() {
-  enforceUppercase(document.getElementById('titleExtra'));
-  enforceUppercase(document.getElementById('payto'));
-  document.querySelectorAll('td:first-child input.money').forEach(enforceUppercase);
-}
-
-// ganti listener Print & JPG agar panggil ini
-document.getElementById('printBtn').addEventListener('click', ()=>{
-  recalc();
-  forceAllUppercaseBeforeRender();
-  window.print();
-});
-
-const oldCaptureJPG = captureJPG;
-captureJPG = async function(){
-  forceAllUppercaseBeforeRender();
-  await oldCaptureJPG();
-};
+document.getElementById('addRow').onclick = () => addRow();
+document.getElementById('addPerson').onclick = addPerson;
+document.getElementById('clearAll').onclick = () => { document.querySelectorAll('input.money').forEach(i=>i.value=''); recalc(); };
+document.getElementById('printBtn').onclick = () => window.print();
+document.getElementById('jpgBtn').onclick = captureJPG;
+document.getElementById('basis').onchange = recalc;
 
 function boot(){
-  rebuildHeader(); rebuildFooter();
-
-  autoExpandOnAdd = false;          // ⬅️ matikan auto expand saat inisialisasi
-  for (let i=0;i<10;i++) addRow();  // pakai addRow biasa, tapi tidak expand
-  autoExpandOnAdd = true;           // ⬅️ aktifkan lagi untuk interaksi user
-
-  visibleRows = 5;                  // tampilan awal 5 baris
-  applyRowVisibility();
-  recalc();
+    rebuildHeader(); rebuildFooter();
+    autoExpandOnAdd = false;
+    for(let i=0; i<5; i++) addRow(); // 5 Baris Default
+    autoExpandOnAdd = true;
+    applyRowVisibility();
 }
 
 boot();
