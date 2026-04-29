@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <title>Debit Note Makan Siang Pro</title>
+    <title>Debit Note Makan Siang Pro - Upgrade</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -19,9 +19,8 @@
             --border: #e2e8f0;
             --inp-h: 40px;
             --inp-fs: 14px;
-            /* Warna untuk Zebra Stripes */
-            --row-even: #f8fafc; 
-            --row-hover: #f1f5f9;
+            --row-even: #f8fafc; /* Warna Zebra */
+            --row-hover: #f1f5f9; /* Warna Hover */
         }
 
         * { box-sizing: border-box; transition: background 0.2s, border 0.2s; }
@@ -115,17 +114,10 @@
 
         td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: right; }
 
-        /* FITUR BARU: ZEBRA STRIPES & HOVER */
-        #tbody tr:nth-child(even) {
-            background-color: var(--row-even);
-        }
-        #tbody tr:hover {
-            background-color: var(--row-hover) !important;
-        }
-        /* Mengatur input agar transparan mengikuti warna baris */
-        #tbody tr input.money {
-            background-color: transparent;
-        }
+        /* UPGRADE: ZEBRA STRIPES & HOVER */
+        #tbody tr:nth-child(even) { background-color: var(--row-even); }
+        #tbody tr:hover { background-color: var(--row-hover) !important; }
+        #tbody tr input.money { background-color: transparent; }
 
         input.money {
             width: 100%; height: var(--inp-h); font-size: var(--inp-fs);
@@ -134,30 +126,39 @@
         }
         
         td:first-child input.money { text-align: left; font-weight: 600; }
-
-        input.money:focus { 
-            border-color: var(--primary); 
-            background-color: #fff !important; 
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); 
-        }
+        input.money:focus { border-color: var(--primary); background-color: #fff !important; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
         
         .row-label { background: #fdfbf7; font-weight: 600; }
         .row-tot { background: #f5f3ff; font-weight: 700; color: var(--primary); }
         .row-net { background: #eff6ff; font-weight: 800; font-size: 1.15rem; color: #1d4ed8; }
         .col-total { font-weight: 800; background: #f8fafc; color: #000; }
 
-        .payto { padding: 24px; background: #fff; border-top: 2px solid var(--border); display: flex; align-items: center; gap: 16px; }
-        .payto label { font-weight: 800; font-size: 1rem; color: #000; }
+        /* UPGRADE: PAYMENT INFO AREA */
+        .payto { padding: 24px; background: #fff; border-top: 2px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+        .payto-input-wrap { display: flex; align-items: center; gap: 16px; }
+        .payto label { font-weight: 800; font-size: 1rem; color: #000; min-width: 100px; }
         .payto input { flex: 1; padding: 14px 18px; border: 2px solid var(--primary); border-radius: 12px; font-weight: 800; background: #f5f3ff; color: var(--primary-dark); outline: none; text-transform: uppercase; font-size: 1.1rem; }
+
+        #info-rekening {
+            padding: 12px 18px;
+            background: #f0fdf4; /* Soft green */
+            border-radius: 10px;
+            font-weight: 700;
+            color: #15803d;
+            display: none;
+            border: 1px dashed #4ade80;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        #qr-wrap { display: none; text-align: center; margin-top: 10px; }
+        #qr-code { width: 150px; height: 150px; border: 4px solid white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
         .more-row td { background: #fff !important; text-align: center !important; padding: 12px; font-weight: 800; font-size: 0.85rem; color: var(--primary); cursor: pointer; border-bottom: 1px solid var(--border); }
 
-        .note { padding: 16px 24px; font-size: 0.75rem; color: var(--text-muted); background: #fff; font-style: italic; }
-
         @media print {
-            .toolbar, .btn, .more-row, .note { display: none !important; }
+            .toolbar, .btn, .more-row { display: none !important; }
             .wrap { border: none; box-shadow: none; border-radius: 0; }
-            th { border-bottom: 2px solid black !important; color: black !important; }
             #tbody tr:nth-child(even) { background-color: transparent !important; }
             input.money, #titleExtra, #payto { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; }
         }
@@ -209,14 +210,31 @@
     </div>
 
     <div class="payto">
-        <label for="payto">BAYAR KE:</label>
-        <input type="text" id="payto" placeholder="MASUKKAN NAMA REKENING / KONTAK">
+        <div class="payto-input-wrap">
+            <label for="payto">BAYAR KE:</label>
+            <input type="text" id="payto" placeholder="KETIK NAMA TEMAN">
+        </div>
+        <div id="info-rekening"></div>
+        <div id="qr-wrap">
+            <img id="qr-code" src="" alt="QR Pay">
+            <p style="font-size: 10px; color: var(--text-muted); margin-top: 5px;">Scan QR untuk transfer</p>
+        </div>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+// --- DATABASE REKENING ---
+// Silakan tambahkan data teman-teman Anda di sini
+const dbRekening = {
+    "SARAH": "BCA 7638473927 a/n Sarah",
+    "WISI": "MANDIRI 123456789 a/n Wisi",
+    "ICHA": "DANA 08123456789 (Icha)",
+    "SANTI": "BCA 987654321 a/n Santi",
+    "MOLI": "OVO 0855223344 (Moli)"
+};
+
 const fmtID = new Intl.NumberFormat('id-ID');
 const fmt = n => fmtID.format(Math.round(n));
 const cleanNumber = v => {
@@ -235,6 +253,32 @@ function forceCaps(el) {
     if(!el) return;
     el.value = el.value.toUpperCase();
 }
+
+// LOGIKA AUTO-REKENING & QR
+const paytoInput = document.getElementById('payto');
+const infoRek = document.getElementById('info-rekening');
+const qrWrap = document.getElementById('qr-wrap');
+const qrImg = document.getElementById('qr-code');
+
+paytoInput.addEventListener('input', function(e) {
+    forceCaps(e.target);
+    const inputName = e.target.value.trim().toUpperCase();
+    
+    if (dbRekening[inputName]) {
+        const detail = dbRekening[inputName];
+        infoRek.textContent = "Silahkan transfer ke rek: " + detail;
+        infoRek.style.display = 'block';
+        qrImg.src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(detail)}&choe=UTF-8`;
+        qrWrap.style.display = 'block';
+    } else if (inputName.length > 5) {
+        infoRek.style.display = 'none';
+        qrImg.src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(inputName)}&choe=UTF-8`;
+        qrWrap.style.display = 'block';
+    } else {
+        infoRek.style.display = 'none';
+        qrWrap.style.display = 'none';
+    }
+});
 
 function ensureMoreRow(){
     if (moreRowEl && moreRowEl.isConnected) return moreRowEl;
@@ -403,28 +447,18 @@ function hookHeaderRename(){
     });
 }
 
-document.getElementById('titleExtra').addEventListener('input', e => forceCaps(e.target));
-document.getElementById('payto').addEventListener('input', e => forceCaps(e.target));
 document.getElementById('addRow').onclick = () => addRow();
 document.getElementById('addPerson').onclick = addPerson;
 document.getElementById('clearAll').onclick = () => { document.querySelectorAll('input.money').forEach(i=>i.value=''); recalc(); };
 document.getElementById('basis').onchange = recalc;
-document.getElementById('printBtn').onclick = () => {
-    forceCaps(document.getElementById('titleExtra'));
-    forceCaps(document.getElementById('payto'));
-    window.print();
-};
+document.getElementById('printBtn').onclick = () => window.print();
 
 document.getElementById('jpgBtn').onclick = async () => {
-    forceCaps(document.getElementById('titleExtra'));
-    forceCaps(document.getElementById('payto'));
-    document.body.classList.add('capturing');
     const canvas = await html2canvas(document.getElementById('capture-root'), { scale: 2 });
     const a = document.createElement('a');
     a.href = canvas.toDataURL("image/jpeg", 0.9);
     a.download = `DebitNote_${Date.now()}.jpg`;
     a.click();
-    document.body.classList.remove('capturing');
 };
 
 function boot(){
