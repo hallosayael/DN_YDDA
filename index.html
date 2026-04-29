@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    <title>Debit Note Makan Siang Pro - 1 Page Print</title>
+    <title>Debit Note Makan Siang Pro - Upgrade</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -19,8 +19,8 @@
             --border: #e2e8f0;
             --inp-h: 40px;
             --inp-fs: 14px;
-            --row-even: #f8fafc;
-            --row-hover: #f1f5f9;
+            --row-even: #f8fafc; /* Warna Zebra */
+            --row-hover: #f1f5f9; /* Warna Hover */
         }
 
         * { box-sizing: border-box; transition: background 0.2s, border 0.2s; }
@@ -55,11 +55,12 @@
             padding: 4px 10px;
             outline: none;
             text-transform: uppercase;
-            width: 100%; 
-            max-width: 700px; 
-            min-width: 300px;
-            text-align: center;
-            font-size: 1.1rem;
+            /* Update Lebar Di Sini */
+    width: 100%; 
+    max-width: 650px; 
+    min-width: 300px;
+    text-align: center;
+    font-size: 1.1rem;
         }
 
         .toolbar {
@@ -118,6 +119,7 @@
 
         td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: right; }
 
+        /* UPGRADE: ZEBRA STRIPES & HOVER */
         #tbody tr:nth-child(even) { background-color: var(--row-even); }
         #tbody tr:hover { background-color: var(--row-hover) !important; }
         #tbody tr input.money { background-color: transparent; }
@@ -136,6 +138,7 @@
         .row-net { background: #eff6ff; font-weight: 800; font-size: 1.15rem; color: #1d4ed8; }
         .col-total { font-weight: 800; background: #f8fafc; color: #000; }
 
+        /* UPGRADE: PAYMENT INFO AREA */
         .payto { padding: 24px; background: #fff; border-top: 2px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
         .payto-input-wrap { display: flex; align-items: center; gap: 16px; }
         .payto label { font-weight: 800; font-size: 1rem; color: #000; min-width: 100px; }
@@ -143,7 +146,7 @@
 
         #info-rekening {
             padding: 12px 18px;
-            background: #f0fdf4;
+            background: #f0fdf4; /* Soft green */
             border-radius: 10px;
             font-weight: 700;
             color: #15803d;
@@ -154,56 +157,16 @@
         }
 
         #qr-wrap { display: none; text-align: center; margin-top: 10px; }
-        #qr-code { width: 150px; height: 150px; border: 4px solid white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+        #qr-code { width: 150px; height: 150px; border: 4px solid white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
         .more-row td { background: #fff !important; text-align: center !important; padding: 12px; font-weight: 800; font-size: 0.85rem; color: var(--primary); cursor: pointer; border-bottom: 1px solid var(--border); }
 
-        /* --- PRINT OPTIMIZATION (1 PAGE) --- */
-/* --- PRINT OPTIMIZATION (LANDSCAPE & 1 PAGE) --- */
-@media print {
-    @page {
-        size: landscape; /* Mengubah orientasi kertas jadi horizontal */
-        margin: 10mm;    /* Margin yang pas untuk Landscape */
-    }
-    
-    body {
-        background: white;
-        padding: 0;
-    }
-
-    .wrap {
-        border: none;
-        box-shadow: none;
-        border-radius: 0;
-        width: 100%;
-        /* Menghilangkan transformasi scale jika sudah cukup di landscape, 
-           atau gunakan scale yang lebih ringan (0.95) jika kolom sangat banyak */
-        transform: scale(1); 
-        transform-origin: top left;
-    }
-
-    /* Sembunyikan elemen yang tidak perlu di print */
-    .toolbar, .btn, .more-row, .btn-group, .basis-wrap { 
-        display: none !important; 
-    }
-    
-    /* Pastikan tabel mengambil lebar penuh kertas landscape */
-    table {
-        min-width: 100% !important;
-        width: 100% !important;
-        table-layout: auto;
-    }
-
-    input.money, #titleExtra, #payto { 
-        border: none !important; 
-        background: transparent !important; 
-        color: black !important; 
-        padding: 0 !important; 
-        appearance: none;
-    }
-
-    #qr-wrap { display: block !important; }
-}
+        @media print {
+            .toolbar, .btn, .more-row { display: none !important; }
+            .wrap { border: none; box-shadow: none; border-radius: 0; }
+            #tbody tr:nth-child(even) { background-color: transparent !important; }
+            input.money, #titleExtra, #payto { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; }
+        }
     </style>
 </head>
 <body>
@@ -267,6 +230,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+// --- DATABASE REKENING ---
+// Silakan tambahkan data teman-teman Anda di sini
 const dbRekening = {
     "SARAH": "BCA 8820611862 a/n SARAH AMALIAWATI",
     "WISI": "BCA 7615382035 a/n WISI SEFTIANI",
@@ -289,8 +254,12 @@ let visibleRows = 5;
 let moreRowEl = null;
 let autoExpandOnAdd = true;
 
-function forceCaps(el) { if(el) el.value = el.value.toUpperCase(); }
+function forceCaps(el) {
+    if(!el) return;
+    el.value = el.value.toUpperCase();
+}
 
+// LOGIKA AUTO-REKENING & QR
 const paytoInput = document.getElementById('payto');
 const infoRek = document.getElementById('info-rekening');
 const qrWrap = document.getElementById('qr-wrap');
@@ -299,15 +268,22 @@ const qrImg = document.getElementById('qr-code');
 paytoInput.addEventListener('input', function(e) {
     forceCaps(e.target);
     const inputName = e.target.value.trim().toUpperCase();
+    
     if (dbRekening[inputName]) {
         const detail = dbRekening[inputName];
         infoRek.textContent = "Silahkan transfer ke rek: " + detail;
         infoRek.style.display = 'block';
+        
+        // GANTI BAGIAN INI: Menggunakan API alternatif yang lebih stabil
         qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(detail)}`;
+        
         qrWrap.style.display = 'block';
     } else if (inputName.length > 5) {
         infoRek.style.display = 'none';
+        
+        // GANTI BAGIAN INI JUGA
         qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(inputName)}`;
+        
         qrWrap.style.display = 'block';
     } else {
         infoRek.style.display = 'none';
@@ -329,18 +305,24 @@ function ensureMoreRow(){
 
 function applyRowVisibility(){
     const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
+    const total = rows.length;
     rows.forEach((tr, i) => { tr.style.display = (i < visibleRows) ? '' : 'none'; });
     const mr = ensureMoreRow();
-    if (rows.length > 5){
-        const anchor = rows[Math.min(visibleRows, rows.length) - 1];
+    mr.firstElementChild.colSpan = names.length + 2;
+    if (total > 5){
+        const anchorIdx = Math.min(visibleRows, total) - 1;
+        const anchor = rows[anchorIdx];
         if (anchor) tbody.insertBefore(mr, anchor.nextSibling);
         mr.style.display = '';
-    } else mr.style.display = 'none';
+    } else {
+        mr.style.display = 'none';
+    }
 }
 
 function toggleMoreRows(){
     const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
-    visibleRows = (visibleRows >= rows.length) ? 5 : visibleRows + 5;
+    if (visibleRows >= rows.length) visibleRows = 5;
+    else visibleRows += 5;
     applyRowVisibility();
 }
 
@@ -388,7 +370,7 @@ function addRow(label=''){
 
     if(autoExpandOnAdd) {
         const totalRows = [...tbody.rows].filter(r => !r.classList.contains('more-row')).length;
-        visibleRows = Math.max(visibleRows, totalRows);
+        visibleRows = Math.min(totalRows, visibleRows + 1);
         applyRowVisibility();
     }
 }
@@ -403,12 +385,14 @@ function recalc(){
         tr.lastElementChild.textContent = fmt(rowTot);
         vals.forEach((v,i)=> per[i]+=v);
     });
+
     const gSub = per.reduce((a,b)=>a+b,0);
     per.forEach((v,i)=> (document.getElementById(`rSub_${i}`).textContent = fmt(v)));
     document.getElementById('rSub_total').textContent = fmt(gSub);
 
     const activeIdx = per.map((v,i)=> v>0?i:-1).filter(i=>i>=0);
     const nAct = activeIdx.length || 1;
+
     const ongTot = cleanNumber(document.getElementById('rOng_total').value);
     const lainTot = cleanNumber(document.getElementById('rLain_total').value);
     const discTot = cleanNumber(document.getElementById('rDisc_total').value);
@@ -478,31 +462,27 @@ document.getElementById('addRow').onclick = () => addRow();
 document.getElementById('addPerson').onclick = addPerson;
 document.getElementById('clearAll').onclick = () => { document.querySelectorAll('input.money').forEach(i=>i.value=''); recalc(); };
 document.getElementById('basis').onchange = recalc;
-document.getElementById('printBtn').onclick = () => {
-    // Membuka paksa semua baris sebelum print agar tercetak semua
-    const originalVisible = visibleRows;
-    visibleRows = 999; 
-    applyRowVisibility();
-    window.print();
-    // Kembalikan ke tampilan semula setelah dialog print tutup
-    setTimeout(() => { visibleRows = originalVisible; applyRowVisibility(); }, 1000);
-};
+document.getElementById('printBtn').onclick = () => window.print();
 
 document.getElementById('jpgBtn').onclick = async () => {
-    const btn = document.getElementById('jpgBtn');
-    btn.textContent = "Processing...";
-    await new Promise(r => setTimeout(r, 600));
-    const canvas = await html2canvas(document.getElementById('capture-root'), { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: "#f1f5f9",
-        scrollY: -window.scrollY
+    // Memastikan teks sudah caps sebelum capture
+    forceCaps(document.getElementById('titleExtra'));
+    forceCaps(document.getElementById('payto'));
+
+    const captureArea = document.getElementById('capture-root');
+
+    // Tambahkan opsi useCORS dan allowTaint
+    const canvas = await html2canvas(captureArea, { 
+        scale: 2,
+        useCORS: true, // PENTING: Mengizinkan capture gambar dari URL luar
+        allowTaint: false,
+        logging: true // Bisa bantu cek error di console browser
     });
+
     const a = document.createElement('a');
     a.href = canvas.toDataURL("image/jpeg", 0.9);
     a.download = `DebitNote_${Date.now()}.jpg`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    btn.textContent = "📸 JPG";
+    a.click();
 };
 
 function boot(){
