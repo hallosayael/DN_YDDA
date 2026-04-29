@@ -19,6 +19,9 @@
             --border: #e2e8f0;
             --inp-h: 40px;
             --inp-fs: 14px;
+            /* Warna untuk Zebra Stripes */
+            --row-even: #f8fafc; 
+            --row-hover: #f1f5f9;
         }
 
         * { box-sizing: border-box; transition: background 0.2s, border 0.2s; }
@@ -48,7 +51,7 @@
             border: none;
             border-bottom: 2px solid var(--border);
             background: transparent;
-            font-weight: 800; /* Extra Bold */
+            font-weight: 800;
             color: var(--primary);
             padding: 2px 8px;
             outline: none;
@@ -95,15 +98,14 @@
         th {
             background: #f8fafc;
             padding: 14px 12px;
-            font-size: 0.85rem; /* Sedikit lebih besar */
-            font-weight: 800; /* MAKSIMAL BOLD */
+            font-size: 0.85rem;
+            font-weight: 800;
             text-transform: uppercase;
-            color: #0f172a; /* Warna lebih gelap agar kontras */
+            color: #0f172a;
             border-bottom: 2px solid var(--border);
             text-align: right;
         }
 
-        /* Kolom Menu Item Lebar */
         th:first-child, td:first-child { 
             text-align: left; 
             padding-left: 24px; 
@@ -113,6 +115,18 @@
 
         td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: right; }
 
+        /* FITUR BARU: ZEBRA STRIPES & HOVER */
+        #tbody tr:nth-child(even) {
+            background-color: var(--row-even);
+        }
+        #tbody tr:hover {
+            background-color: var(--row-hover) !important;
+        }
+        /* Mengatur input agar transparan mengikuti warna baris */
+        #tbody tr input.money {
+            background-color: transparent;
+        }
+
         input.money {
             width: 100%; height: var(--inp-h); font-size: var(--inp-fs);
             font-weight: 500; border: 1px solid var(--border);
@@ -121,7 +135,11 @@
         
         td:first-child input.money { text-align: left; font-weight: 600; }
 
-        input.money:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        input.money:focus { 
+            border-color: var(--primary); 
+            background-color: #fff !important; 
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); 
+        }
         
         .row-label { background: #fdfbf7; font-weight: 600; }
         .row-tot { background: #f5f3ff; font-weight: 700; color: var(--primary); }
@@ -132,7 +150,7 @@
         .payto label { font-weight: 800; font-size: 1rem; color: #000; }
         .payto input { flex: 1; padding: 14px 18px; border: 2px solid var(--primary); border-radius: 12px; font-weight: 800; background: #f5f3ff; color: var(--primary-dark); outline: none; text-transform: uppercase; font-size: 1.1rem; }
 
-        .more-row td { background: #fff; text-align: center !important; padding: 12px; font-weight: 800; font-size: 0.85rem; color: var(--primary); cursor: pointer; border-bottom: 1px solid var(--border); }
+        .more-row td { background: #fff !important; text-align: center !important; padding: 12px; font-weight: 800; font-size: 0.85rem; color: var(--primary); cursor: pointer; border-bottom: 1px solid var(--border); }
 
         .note { padding: 16px 24px; font-size: 0.75rem; color: var(--text-muted); background: #fff; font-style: italic; }
 
@@ -140,6 +158,7 @@
             .toolbar, .btn, .more-row, .note { display: none !important; }
             .wrap { border: none; box-shadow: none; border-radius: 0; }
             th { border-bottom: 2px solid black !important; color: black !important; }
+            #tbody tr:nth-child(even) { background-color: transparent !important; }
             input.money, #titleExtra, #payto { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; }
         }
     </style>
