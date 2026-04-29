@@ -47,19 +47,35 @@
         header { padding: 30px 20px; background: #fff; border-bottom: 1px solid var(--border); text-align: center; }
         h1 { margin: 0; font-weight: 800; font-size: 1.6rem; letter-spacing: -0.025em; display: flex; align-items: center; justify-content: center; gap: 12px; }
 
-        #titleExtra {
-            border: none;
-            border-bottom: 2px solid var(--border);
-            background: transparent;
-            font-weight: 800;
-            color: var(--primary);
-            padding: 4px 10px;
-            outline: none;
-            text-transform: uppercase;
-            width: 300px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
+#titleExtra {
+    border: none;
+    border-bottom: 2px solid var(--border);
+    background: transparent;
+    font-weight: 800;
+    color: var(--primary);
+    padding: 4px 10px;
+    outline: none;
+    text-transform: uppercase;
+    /* Update Lebar Di Sini */
+    width: 100%; 
+    max-width: 650px; 
+    min-width: 300px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* Tambahan agar di PC header tidak terlalu mepet */
+header h1 {
+    display: flex;
+    flex-direction: column; /* Membuat "DEBIT NOTE" dan "INPUT JUDUL" bertumpuk jika teks panjang */
+    gap: 10px;
+}
+
+@media (min-width: 768px) {
+    header h1 {
+        flex-direction: row; /* Kembali sejajar di layar lebar */
+    }
+}
 
         /* TOOLBAR PC FIX */
         .toolbar {
