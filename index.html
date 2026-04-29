@@ -471,14 +471,49 @@ document.getElementById('printBtn').onclick = () => window.print();
 
 document.getElementById('jpgBtn').onclick = async () => {
     const btn = document.getElementById('jpgBtn');
-    btn.textContent = "Processing...";
-    await new Promise(r => setTimeout(r, 600));
-    const canvas = await html2canvas(document.getElementById('capture-root'), { scale: 2, useCORS: true, backgroundColor: "#f1f5f9" });
-    const a = document.createElement('a');
-    a.href = canvas.toDataURL("image/jpeg", 0.9);
-    a.download = `DebitNote_${Date.now()}.jpg`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    btn.textContent = "📸 JPG";
+    const originalText = btn.textContent;
+    btn.textContent = "⏳ Memotret..."; 
+    btn.disabled = true;
+
+    // Pastikan semua input sudah kapital
+    forceCaps(document.getElementById('titleExtra'));
+    forceCaps(document.getElementById('payto'));
+
+    try {
+        const captureArea = document.getElementById('capture-root');
+        
+        // Jeda sebentar agar render QR Code selesai
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        // PENTING: Gunakan opsi scrollX: 0 dan scrollY: 0 agar tidak terpotong posisi scroll HP
+        const canvas = await html2canvas(captureArea, { 
+            scale: 2, // Kualitas tinggi (HD)
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: "#f1f5f9",
+            scrollY: -window.scrollY, // Reset posisi scroll saat capture
+            scrollX: 0,
+            windowWidth: captureArea.scrollWidth, // Ambil lebar asli elemen
+            windowHeight: captureArea.scrollHeight // Ambil tinggi asli elemen (full scroll)
+        });
+
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        
+        // Proses Download
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = `DebitNote_${Date.now()}.jpg`;
+        document.body.appendChild(a); 
+        a.click();
+        document.body.removeChild(a);
+
+    } catch (err) {
+        console.error("Capture failed", err);
+        alert("Gagal memotret otomatis. Jika hasil terpotong, coba screenshot manual.");
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+    }
 };
 
 function boot(){
