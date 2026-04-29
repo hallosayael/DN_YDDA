@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Debit Note Makan Siang Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Debit Note Makan Siang Pro - Upgrade</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -17,10 +17,10 @@
             --text-main: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            --inp-h: 38px;
+            --inp-h: 40px;
             --inp-fs: 14px;
-            --row-even: #f8fafc;
-            --row-hover: #f1f5f9;
+            --row-even: #f8fafc; /* Warna Zebra */
+            --row-hover: #f1f5f9; /* Warna Hover */
         }
 
         * { box-sizing: border-box; transition: background 0.2s, border 0.2s; }
@@ -30,7 +30,7 @@
             background: var(--bg);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 24px;
         }
 
         .wrap {
@@ -43,84 +43,61 @@
             border: 1px solid var(--border);
         }
 
-        /* HEADER FIX */
-        header { padding: 30px 20px; background: #fff; border-bottom: 1px solid var(--border); text-align: center; }
-        h1 { margin: 0; font-weight: 800; font-size: 1.6rem; letter-spacing: -0.025em; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        header { padding: 24px; background: #fff; border-bottom: 1px solid var(--border); text-align: center; }
+        h1 { margin: 0; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.025em; display: flex; align-items: center; justify-content: center; gap: 12px; }
 
-#titleExtra {
-    border: none;
-    border-bottom: 2px solid var(--border);
-    background: transparent;
-    font-weight: 800;
-    color: var(--primary);
-    padding: 4px 10px;
-    outline: none;
-    text-transform: uppercase;
-    /* Update Lebar Di Sini */
-    width: 100%; 
-    max-width: 650px; 
-    min-width: 300px;
-    text-align: center;
-    font-size: 1.1rem;
-}
+        #titleExtra {
+            border: none;
+            border-bottom: 2px solid var(--border);
+            background: transparent;
+            font-weight: 800;
+            color: var(--primary);
+            padding: 2px 8px;
+            outline: none;
+            text-transform: uppercase;
+            width: 320px;
+        }
 
-/* Tambahan agar di PC header tidak terlalu mepet */
-header h1 {
-    display: flex;
-    flex-direction: column; /* Membuat "DEBIT NOTE" dan "INPUT JUDUL" bertumpuk jika teks panjang */
-    gap: 10px;
-}
-
-@media (min-width: 768px) {
-    header h1 {
-        flex-direction: row; /* Kembali sejajar di layar lebar */
-    }
-}
-
-        /* TOOLBAR PC FIX */
         .toolbar {
-            padding: 20px 24px;
+            padding: 16px 24px;
             background: #f8fafc;
             border-bottom: 1px solid var(--border);
             display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
             justify-content: space-between;
             align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
         }
 
-        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .btn {
-            padding: 10px 18px;
+            padding: 10px 16px;
             border-radius: 10px;
-            font-size: 0.85rem;
+            font-size: 0.875rem;
             font-weight: 600;
             cursor: pointer;
             border: 1px solid var(--border);
             background: white;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            white-space: nowrap;
+            gap: 6px;
         }
 
-        .btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+        .btn:hover { background: #f1f5f9; }
         .btn-primary { background: var(--primary); color: white; border: none; }
         .btn-success { background: var(--success); color: white; border: none; }
         .btn-danger { color: var(--danger); }
 
-        .basis-wrap { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
-        select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 700; outline: none; background: #fff; cursor: pointer; }
+        select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); font-weight: 700; outline: none; }
 
-        /* TABLE FIX */
-        .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; min-width: 1000px; table-layout: fixed; }
+        .table-wrap { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1050px; }
         
         th {
             background: #f8fafc;
             padding: 14px 12px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 800;
             text-transform: uppercase;
             color: #0f172a;
@@ -128,66 +105,61 @@ header h1 {
             text-align: right;
         }
 
-        th:first-child, td:first-child { text-align: left; padding-left: 24px; width: 320px; }
-        td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: right; overflow: hidden; }
+        th:first-child, td:first-child { 
+            text-align: left; 
+            padding-left: 24px; 
+            width: 350px; 
+            min-width: 300px;
+        }
 
+        td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: right; }
+
+        /* UPGRADE: ZEBRA STRIPES & HOVER */
         #tbody tr:nth-child(even) { background-color: var(--row-even); }
-        #tbody tr:hover { background-color: var(--row-hover); }
+        #tbody tr:hover { background-color: var(--row-hover) !important; }
+        #tbody tr input.money { background-color: transparent; }
 
         input.money {
             width: 100%; height: var(--inp-h); font-size: var(--inp-fs);
             font-weight: 500; border: 1px solid var(--border);
             border-radius: 8px; padding: 0 10px; text-align: right; outline: none;
-            background: #fff;
         }
         
-        #tbody tr input.money { background-color: rgba(255,255,255,0.6); }
         td:first-child input.money { text-align: left; font-weight: 600; }
         input.money:focus { border-color: var(--primary); background-color: #fff !important; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
         
         .row-label { background: #fdfbf7; font-weight: 600; }
         .row-tot { background: #f5f3ff; font-weight: 700; color: var(--primary); }
-        .row-net { background: #eff6ff; font-weight: 800; font-size: 1.2rem; color: #1d4ed8; }
+        .row-net { background: #eff6ff; font-weight: 800; font-size: 1.15rem; color: #1d4ed8; }
         .col-total { font-weight: 800; background: #f8fafc; color: #000; }
 
-        /* PAYMENT AREA PC FIX */
-        .payto { padding: 30px; background: #fff; border-top: 2px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .payto-input-wrap { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 8px; }
-        .payto label { font-weight: 800; font-size: 0.9rem; color: #64748b; text-align: center; width: 100%; }
-        .payto input { width: 100%; padding: 14px 20px; border: 2px solid var(--primary); border-radius: 12px; font-weight: 800; background: #f5f3ff; color: var(--primary-dark); outline: none; text-transform: uppercase; text-align: center; font-size: 1.1rem; }
+        /* UPGRADE: PAYMENT INFO AREA */
+        .payto { padding: 24px; background: #fff; border-top: 2px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+        .payto-input-wrap { display: flex; align-items: center; gap: 16px; }
+        .payto label { font-weight: 800; font-size: 1rem; color: #000; min-width: 100px; }
+        .payto input { flex: 1; padding: 14px 18px; border: 2px solid var(--primary); border-radius: 12px; font-weight: 800; background: #f5f3ff; color: var(--primary-dark); outline: none; text-transform: uppercase; font-size: 1.1rem; }
 
         #info-rekening {
-            width: 100%; max-width: 500px;
-            padding: 15px;
-            background: #f0fdf4;
-            border-radius: 12px;
+            padding: 12px 18px;
+            background: #f0fdf4; /* Soft green */
+            border-radius: 10px;
             font-weight: 700;
             color: #15803d;
             display: none;
             border: 1px dashed #4ade80;
-            font-size: 0.95rem;
+            font-size: 1rem;
             text-align: center;
         }
 
         #qr-wrap { display: none; text-align: center; margin-top: 10px; }
-        #qr-code { width: 160px; height: 160px; border: 6px solid white; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        #qr-code { width: 150px; height: 150px; border: 4px solid white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
-        .more-row td { background: #fff !important; text-align: center !important; padding: 15px; font-weight: 800; font-size: 0.85rem; color: var(--primary); cursor: pointer; }
-
-        /* MOBILE FIXES */
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            h1 { font-size: 1.2rem; flex-direction: column; }
-            #titleExtra { width: 100%; }
-            .toolbar { flex-direction: column; align-items: stretch; padding: 15px; }
-            .btn-group { justify-content: center; }
-            .btn { flex: 1 1 40%; justify-content: center; font-size: 0.75rem; }
-            .payto { padding: 20px; }
-        }
+        .more-row td { background: #fff !important; text-align: center !important; padding: 12px; font-weight: 800; font-size: 0.85rem; color: var(--primary); cursor: pointer; border-bottom: 1px solid var(--border); }
 
         @media print {
             .toolbar, .btn, .more-row { display: none !important; }
             .wrap { border: none; box-shadow: none; border-radius: 0; }
+            #tbody tr:nth-child(even) { background-color: transparent !important; }
             input.money, #titleExtra, #payto { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; }
         }
     </style>
@@ -201,13 +173,13 @@ header h1 {
 
     <div class="toolbar">
         <div class="btn-group">
-            <button class="btn btn-primary" id="addRow"><b>+</b> Item</button>
-            <button class="btn btn-primary" id="addPerson"><b>+</b> Nama</button>
+            <button class="btn btn-primary" id="addRow">+ Item</button>
+            <button class="btn btn-primary" id="addPerson">+ Nama</button>
             <button class="btn btn-success" id="printBtn">🖨️ PDF / Print</button>
             <button class="btn btn-success" id="jpgBtn">📸 JPG</button>
             <button class="btn btn-danger" id="clearAll">🧹 Reset</button>
         </div>
-        <div class="basis-wrap">
+        <div style="font-size: 0.875rem; font-weight: 700;">
             Basis Diskon: 
             <select id="basis">
                 <option value="SUBTOTAL" selected>SUBTOTAL</option>
@@ -221,7 +193,7 @@ header h1 {
             <thead>
                 <tr id="hdr">
                     <th>Menu Item</th>
-                    <th class="col-total" style="width: 120px;">Total</th>
+                    <th class="col-total">Total</th>
                 </tr>
             </thead>
             <tbody id="tbody"></tbody>
@@ -239,13 +211,13 @@ header h1 {
 
     <div class="payto">
         <div class="payto-input-wrap">
-            <label for="payto">INFO PEMBAYARAN / BAYAR KE:</label>
+            <label for="payto">BAYAR KE:</label>
             <input type="text" id="payto" placeholder="KETIK NAMA PENERIMA">
         </div>
         <div id="info-rekening"></div>
         <div id="qr-wrap">
             <img id="qr-code" src="" alt="QR Pay" crossorigin="anonymous">
-            <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px; font-weight: 600;">Scan QR untuk copy nomor rekening</p>
+            <p style="font-size: 10px; color: var(--text-muted); margin-top: 5px;">Scan QR untuk copy nomor rekening</p>
         </div>
     </div>
 </div>
@@ -253,6 +225,8 @@ header h1 {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+// --- DATABASE REKENING ---
+// Silakan tambahkan data teman-teman Anda di sini
 const dbRekening = {
     "SARAH": "BCA 8820611862 a/n SARAH AMALIAWATI",
     "WISI": "BCA 7615382035 a/n WISI SEFTIANI",
@@ -275,8 +249,12 @@ let visibleRows = 5;
 let moreRowEl = null;
 let autoExpandOnAdd = true;
 
-function forceCaps(el) { if(el) el.value = el.value.toUpperCase(); }
+function forceCaps(el) {
+    if(!el) return;
+    el.value = el.value.toUpperCase();
+}
 
+// LOGIKA AUTO-REKENING & QR
 const paytoInput = document.getElementById('payto');
 const infoRek = document.getElementById('info-rekening');
 const qrWrap = document.getElementById('qr-wrap');
@@ -285,15 +263,22 @@ const qrImg = document.getElementById('qr-code');
 paytoInput.addEventListener('input', function(e) {
     forceCaps(e.target);
     const inputName = e.target.value.trim().toUpperCase();
+    
     if (dbRekening[inputName]) {
         const detail = dbRekening[inputName];
         infoRek.textContent = "Silahkan transfer ke rek: " + detail;
         infoRek.style.display = 'block';
+        
+        // GANTI BAGIAN INI: Menggunakan API alternatif yang lebih stabil
         qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(detail)}`;
+        
         qrWrap.style.display = 'block';
     } else if (inputName.length > 5) {
         infoRek.style.display = 'none';
+        
+        // GANTI BAGIAN INI JUGA
         qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(inputName)}`;
+        
         qrWrap.style.display = 'block';
     } else {
         infoRek.style.display = 'none';
@@ -307,7 +292,7 @@ function ensureMoreRow(){
     moreRowEl.className = 'more-row';
     const td = document.createElement('td');
     td.colSpan = names.length + 2;
-    td.innerHTML = 'TAMPILKAN LEBIH BANYAK ▾';
+    td.textContent = 'TAMPILKAN LEBIH BANYAK ▾';
     moreRowEl.appendChild(td);
     moreRowEl.addEventListener('click', toggleMoreRows);
     return moreRowEl;
@@ -315,24 +300,29 @@ function ensureMoreRow(){
 
 function applyRowVisibility(){
     const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
+    const total = rows.length;
     rows.forEach((tr, i) => { tr.style.display = (i < visibleRows) ? '' : 'none'; });
     const mr = ensureMoreRow();
     mr.firstElementChild.colSpan = names.length + 2;
-    if (rows.length > 5){
-        const anchor = rows[Math.min(visibleRows, rows.length) - 1];
+    if (total > 5){
+        const anchorIdx = Math.min(visibleRows, total) - 1;
+        const anchor = rows[anchorIdx];
         if (anchor) tbody.insertBefore(mr, anchor.nextSibling);
         mr.style.display = '';
-    } else mr.style.display = 'none';
+    } else {
+        mr.style.display = 'none';
+    }
 }
 
 function toggleMoreRows(){
     const rows = [...tbody.rows].filter(tr => !tr.classList.contains('more-row'));
-    visibleRows = (visibleRows >= rows.length) ? 5 : visibleRows + 5;
+    if (visibleRows >= rows.length) visibleRows = 5;
+    else visibleRows += 5;
     applyRowVisibility();
 }
 
 function rebuildHeader(){
-    document.getElementById('hdr').innerHTML = '<th>MENU ITEM</th>' + names.map(n=>`<th>${n}</th>`).join('') + '<th class="col-total" style="width:120px;">TOTAL</th>';
+    document.getElementById('hdr').innerHTML = '<th>MENU ITEM</th>' + names.map(n=>`<th>${n}</th>`).join('') + '<th class="col-total">TOTAL</th>';
     hookHeaderRename();
 }
 
@@ -375,7 +365,7 @@ function addRow(label=''){
 
     if(autoExpandOnAdd) {
         const totalRows = [...tbody.rows].filter(r => !r.classList.contains('more-row')).length;
-        visibleRows = Math.max(visibleRows, totalRows);
+        visibleRows = Math.min(totalRows, visibleRows + 1);
         applyRowVisibility();
     }
 }
@@ -495,8 +485,10 @@ function boot(){
     autoExpandOnAdd = false;
     for(let i=0; i<5; i++) addRow();
     autoExpandOnAdd = true;
-    applyRowVisibility(); recalc();
+    applyRowVisibility();
+    recalc();
 }
+
 boot();
 </script>
 </body>
