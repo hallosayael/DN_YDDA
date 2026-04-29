@@ -268,11 +268,17 @@ paytoInput.addEventListener('input', function(e) {
         const detail = dbRekening[inputName];
         infoRek.textContent = "Silahkan transfer ke rek: " + detail;
         infoRek.style.display = 'block';
-        qrImg.src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(detail)}&choe=UTF-8`;
+        
+        // GANTI BAGIAN INI: Menggunakan API alternatif yang lebih stabil
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(detail)}`;
+        
         qrWrap.style.display = 'block';
     } else if (inputName.length > 5) {
         infoRek.style.display = 'none';
-        qrImg.src = `https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=${encodeURIComponent(inputName)}&choe=UTF-8`;
+        
+        // GANTI BAGIAN INI JUGA
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(inputName)}`;
+        
         qrWrap.style.display = 'block';
     } else {
         infoRek.style.display = 'none';
