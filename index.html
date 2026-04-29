@@ -162,6 +162,10 @@
         .more-row td { background: #fff !important; text-align: center !important; padding: 12px; font-weight: 800; font-size: 0.85rem; color: var(--primary); cursor: pointer; border-bottom: 1px solid var(--border); }
 
         @media print {
+            @page {
+        size: landscape; /* Mengatur kertas otomatis jadi horizontal */
+        margin: 10mm;    /* Memberi jarak aman di pinggiran kertas */
+    }
             .toolbar, .btn, .more-row { display: none !important; }
             .wrap { border: none; box-shadow: none; border-radius: 0; }
             #tbody tr:nth-child(even) { background-color: transparent !important; }
