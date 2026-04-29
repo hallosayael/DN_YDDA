@@ -161,16 +161,57 @@
 
         .more-row td { background: #fff !important; text-align: center !important; padding: 12px; font-weight: 800; font-size: 0.85rem; color: var(--primary); cursor: pointer; border-bottom: 1px solid var(--border); }
 
-        @media print {
-            @page {
-        size: landscape; /* Mengatur kertas otomatis jadi horizontal */
-        margin: 10mm;    /* Memberi jarak aman di pinggiran kertas */
+@media print {
+    @page {
+        size: landscape; /* WAJIB: Agar kolom tidak terpotong ke samping */
+        margin: 0.5cm;   /* Margin sangat tipis agar ruang maksimal */
     }
-            .toolbar, .btn, .more-row { display: none !important; }
-            .wrap { border: none; box-shadow: none; border-radius: 0; }
-            #tbody tr:nth-child(even) { background-color: transparent !important; }
-            input.money, #titleExtra, #payto { border: none !important; background: transparent !important; color: black !important; padding: 0 !important; }
-        }
+
+    body {
+        background: white;
+        padding: 0;
+        margin: 0;
+    }
+
+    .wrap {
+        border: none;
+        box-shadow: none;
+        width: 100% !important;
+        max-width: none !important;
+        /* Force scaling agar muat 1 halaman */
+        transform: scale(0.75); 
+        transform-origin: top left;
+        width: 133%; /* Kompensasi dari scale 0.75 agar tetap penuh ke kanan */
+    }
+
+    /* Sembunyikan elemen pengganggu */
+    .toolbar, .btn, .more-row, .btn-group { 
+        display: none !important; 
+    }
+
+    /* Pastikan tabel tidak terpotong ke samping */
+    .table-wrap {
+        overflow: visible !important;
+    }
+
+    table {
+        table-layout: auto !important;
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* Paksa input jadi teks biasa agar bersih */
+    input.money, #titleExtra, #payto { 
+        border: none !important; 
+        background: transparent !important; 
+        color: black !important; 
+        padding: 0 !important; 
+        font-size: inherit !important;
+    }
+
+    /* Munculkan QR Code */
+    #qr-wrap { display: block !important; }
+}
     </style>
 </head>
 <body>
@@ -466,7 +507,20 @@ document.getElementById('addRow').onclick = () => addRow();
 document.getElementById('addPerson').onclick = addPerson;
 document.getElementById('clearAll').onclick = () => { document.querySelectorAll('input.money').forEach(i=>i.value=''); recalc(); };
 document.getElementById('basis').onchange = recalc;
-document.getElementById('printBtn').onclick = () => window.print();
+document.getElementById('printBtn').onclick = () => {
+    // 1. Paksa semua baris terbuka agar tidak ada yang tersembunyi
+    const originalVisible = visibleRows;
+    visibleRows = 999; 
+    applyRowVisibility();
+
+    // 2. Beri jeda sangat singkat agar render selesai
+    setTimeout(() => {
+        window.print();
+        // 3. Kembalikan ke tampilan semula setelah dialog print tutup
+        visibleRows = originalVisible; 
+        applyRowVisibility();
+    }, 100);
+};
 
 document.getElementById('jpgBtn').onclick = async () => {
     // Memastikan teks sudah caps sebelum capture
