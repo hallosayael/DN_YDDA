@@ -216,8 +216,8 @@
         </div>
         <div id="info-rekening"></div>
         <div id="qr-wrap">
-            <img id="qr-code" src="" alt="QR Pay">
-            <p style="font-size: 10px; color: var(--text-muted); margin-top: 5px;">Scan QR untuk transfer</p>
+            <img id="qr-code" src="" alt="QR Pay" crossorigin="anonymous">
+            <p style="font-size: 10px; color: var(--text-muted); margin-top: 5px;">Scan QR untuk copy nomor rekening</p>
         </div>
     </div>
 </div>
@@ -460,7 +460,20 @@ document.getElementById('basis').onchange = recalc;
 document.getElementById('printBtn').onclick = () => window.print();
 
 document.getElementById('jpgBtn').onclick = async () => {
-    const canvas = await html2canvas(document.getElementById('capture-root'), { scale: 2 });
+    // Memastikan teks sudah caps sebelum capture
+    forceCaps(document.getElementById('titleExtra'));
+    forceCaps(document.getElementById('payto'));
+
+    const captureArea = document.getElementById('capture-root');
+
+    // Tambahkan opsi useCORS dan allowTaint
+    const canvas = await html2canvas(captureArea, { 
+        scale: 2,
+        useCORS: true, // PENTING: Mengizinkan capture gambar dari URL luar
+        allowTaint: false,
+        logging: true // Bisa bantu cek error di console browser
+    });
+
     const a = document.createElement('a');
     a.href = canvas.toDataURL("image/jpeg", 0.9);
     a.download = `DebitNote_${Date.now()}.jpg`;
